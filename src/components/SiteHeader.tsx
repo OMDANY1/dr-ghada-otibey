@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { getOppositeLocale, type Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { doctorProfile } from "@/content/doctor";
+import { StitchIcon } from "@/components/StitchIcon";
 
 interface SiteHeaderProps {
   locale: Locale;
@@ -44,6 +45,11 @@ export function SiteHeader({ locale, dict }: SiteHeaderProps) {
     { href: `/${locale}/areas-of-care`, label: dict.nav.areas, exact: false },
     { href: `/${locale}/articles`, label: dict.nav.articles, exact: false },
     { href: `/${locale}/reviews`, label: dict.nav.reviews, exact: false },
+    {
+      href: `/${locale}/consultation`,
+      label: dict.nav.consultation,
+      exact: false,
+    },
   ];
 
   const isItemActive = (href: string, exact: boolean) => {
@@ -52,130 +58,122 @@ export function SiteHeader({ locale, dict }: SiteHeaderProps) {
   };
 
   const consultationHref = `/${locale}/consultation`;
-  const isConsultationActive = pathname.startsWith(consultationHref);
 
   return (
-    <header className="sticky top-0 z-40 bg-canvas border-b border-hairline">
+    <header className="sticky top-0 w-full z-50 bg-surface-bright border-b border-surface-high shadow-[0_1px_8px_rgba(0,0,0,0.03)]">
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:start-4 focus:z-50 focus:bg-espresso focus:text-canvas focus:px-4 focus:py-2 focus:rounded-md focus:text-sm"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:start-4 focus:z-50 focus:bg-primary-container focus:text-on-primary focus:px-4 focus:py-2 focus:rounded focus:text-sm"
       >
         {dict.nav.skipToContent}
       </a>
 
-      <div className="mx-auto max-w-6xl px-5 sm:px-8 lg:px-10">
-        <div className="flex h-20 items-center justify-between gap-4">
-          {/* Typographic Signature Wordmark Matching Visual Reference */}
-          <Link
-            href={`/${locale}`}
-            className="flex flex-col justify-center py-1 shrink-0"
-          >
-            <span className="text-lg sm:text-[1.2rem] font-semibold text-espresso leading-snug">
-              {doctorProfile.shortSignature[locale]}
-            </span>
+      <div className="mx-auto max-w-[1440px] h-20 px-4 sm:px-6 md:px-12 lg:px-16 flex items-center justify-between gap-2 sm:gap-6">
+        {/* Stitch Signature Wordmark */}
+        <Link
+          href={`/${locale}`}
+          className="flex flex-col justify-center group min-w-0"
+        >
+          <span className="font-editorial text-[19px] sm:text-[22px] font-medium text-primary group-hover:text-primary-container editorial-fade leading-tight truncate">
+            {doctorProfile.shortSignature[locale]}
+          </span>
+          <span className="mt-0.5">
             <span
               dir="ltr"
-              className="font-en-brand text-[9.5px] sm:text-[10px] font-medium text-ink-muted mt-0.5"
+              className="inline-block font-en-label text-[9px] sm:text-[10px] font-semibold text-secondary"
             >
-              {locale === "ar"
-                ? "DR. GHADA ALOTAIBI"
-                : "CONSULTANT DERMATOLOGIST"}
+              Dr. Ghada Alotaibi
+              <span className="hidden sm:inline"> · Riyadh</span>
             </span>
+          </span>
+        </Link>
+
+        {/* Stitch Center Navigation */}
+        <nav
+          aria-label={dict.nav.mobileNavTitle}
+          className="hidden xl:flex items-center gap-7"
+        >
+          {navItems.map((item) => {
+            const active = isItemActive(item.href, item.exact);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                className={`editorial-fade text-[13px] py-1 ${
+                  active
+                    ? "text-primary font-medium border-b border-primary"
+                    : "text-on-surface-variant hover:text-primary"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Stitch End Controls: Pill Language Switcher + Primary Container CTA */}
+        <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+          <div className="flex items-center bg-surface-low border border-surface-high px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-full text-[10.5px] sm:text-[11px]">
+            {locale === "ar" ? (
+              <>
+                <span className="px-1.5 text-primary font-semibold">عربي</span>
+                <span className="text-outline-variant text-[10px]">|</span>
+                <Link
+                  href={switchedPath}
+                  hrefLang="en"
+                  aria-label={dict.nav.switchLangLabel}
+                  className="px-1.5 text-on-surface-variant hover:text-primary editorial-fade font-medium"
+                >
+                  EN
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  href={switchedPath}
+                  hrefLang="ar"
+                  aria-label={dict.nav.switchLangLabel}
+                  className="px-1.5 text-on-surface-variant hover:text-primary editorial-fade font-medium"
+                >
+                  عربي
+                </Link>
+                <span className="text-outline-variant text-[10px]">|</span>
+                <span className="px-1.5 text-primary font-semibold">EN</span>
+              </>
+            )}
+          </div>
+
+          <Link
+            href={consultationHref}
+            className="editorial-fade hidden sm:inline-flex items-center justify-center bg-primary-container text-on-primary hover:bg-primary-hover px-6 h-11 rounded text-xs font-medium shadow-xs"
+          >
+            {dict.nav.bookCta}
           </Link>
 
-          {/* Desktop Center Navigation */}
-          <nav
-            aria-label={dict.nav.mobileNavTitle}
-            className="hidden lg:flex items-center gap-7 xl:gap-8"
+          <button
+            type="button"
+            onClick={() => setMenuOpen((prev) => !prev)}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-navigation-panel"
+            aria-label={menuOpen ? dict.nav.closeMenu : dict.nav.openMenu}
+            className="xl:hidden inline-flex items-center justify-center w-10 h-10 bg-surface-low border border-surface-high text-primary rounded hover:bg-surface-container"
           >
-            {navItems.map((item) => {
-              const active = isItemActive(item.href, item.exact);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  aria-current={active ? "page" : undefined}
-                  className={`editorial-fade relative py-1.5 text-[13.5px] ${
-                    active
-                      ? "text-espresso font-medium after:absolute after:inset-x-0 after:bottom-0 after:h-[1.5px] after:bg-espresso"
-                      : "text-ink-soft hover:text-espresso font-normal"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
-
-          {/* End Actions: Minimal Language Code + Rounded Espresso CTA */}
-          <div className="flex items-center gap-3 sm:gap-5">
-            <Link
-              href={switchedPath}
-              hrefLang={oppositeLocale}
-              aria-label={dict.nav.switchLangLabel}
-              className="editorial-fade px-2 py-1 text-xs font-medium text-ink-soft hover:text-espresso"
-            >
-              <span dir={oppositeLocale === "ar" ? "rtl" : "ltr"}>
-                {oppositeLocale === "en" ? "EN" : "عربي"}
-              </span>
-            </Link>
-
-            <Link
-              href={consultationHref}
-              aria-current={isConsultationActive ? "page" : undefined}
-              className="editorial-fade hidden sm:inline-flex items-center justify-center bg-espresso text-canvas hover:bg-[#2c201a] px-5 py-2.5 text-xs sm:text-[13px] font-medium rounded-[6px]"
-            >
-              {dict.nav.bookCta}
-            </Link>
-
-            <button
-              type="button"
-              onClick={() => setMenuOpen((prev) => !prev)}
-              aria-expanded={menuOpen}
-              aria-controls="mobile-navigation-panel"
-              aria-label={menuOpen ? dict.nav.closeMenu : dict.nav.openMenu}
-              className="lg:hidden inline-flex items-center justify-center w-10 h-10 border border-hairline text-espresso rounded-[6px] hover:bg-warm"
-            >
-              {menuOpen ? (
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  aria-hidden="true"
-                >
-                  <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
-                </svg>
-              ) : (
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  aria-hidden="true"
-                >
-                  <path d="M4 7h16M4 12h16M4 17h11" strokeLinecap="round" />
-                </svg>
-              )}
-            </button>
-          </div>
+            <StitchIcon name={menuOpen ? "close" : "menu"} size={18} />
+          </button>
         </div>
       </div>
 
-      {/* Mobile Navigation Drawer */}
+      {/* Mobile & Tablet Navigation Drawer */}
       {menuOpen && (
         <div
           id="mobile-navigation-panel"
-          className="lg:hidden border-t border-hairline bg-warm"
+          className="xl:hidden border-t border-surface-high bg-surface-lowest shadow-md"
         >
-          <div className="mx-auto max-w-6xl px-5 py-6 space-y-6">
+          <div className="mx-auto max-w-[1440px] px-5 md:px-12 py-6 space-y-5">
             <nav
               aria-label={dict.nav.mobileNavTitle}
-              className="flex flex-col divide-y divide-hairline"
+              className="flex flex-col divide-y divide-surface-high"
             >
               {navItems.map((item) => {
                 const active = isItemActive(item.href, item.exact);
@@ -185,16 +183,16 @@ export function SiteHeader({ locale, dict }: SiteHeaderProps) {
                     href={item.href}
                     aria-current={active ? "page" : undefined}
                     onClick={() => setMenuOpen(false)}
-                    className={`py-3.5 text-[15px] flex items-center justify-between ${
+                    className={`py-3.5 text-sm flex items-center justify-between ${
                       active
-                        ? "text-espresso font-medium"
-                        : "text-ink-soft hover:text-espresso"
+                        ? "text-primary font-semibold"
+                        : "text-on-surface-variant hover:text-primary"
                     }`}
                   >
                     <span>{item.label}</span>
                     {active && (
                       <span
-                        className="w-1.5 h-1.5 rounded-full bg-taupe"
+                        className="w-1.5 h-1.5 rounded-full bg-secondary"
                         aria-hidden="true"
                       />
                     )}
@@ -207,17 +205,17 @@ export function SiteHeader({ locale, dict }: SiteHeaderProps) {
               <Link
                 href={consultationHref}
                 onClick={() => setMenuOpen(false)}
-                className="w-full text-center bg-espresso text-canvas py-3 px-5 text-sm font-medium rounded-[6px]"
+                className="w-full text-center bg-primary-container text-on-primary h-12 inline-flex items-center justify-center text-sm font-medium rounded"
               >
                 {dict.nav.consultation}
               </Link>
 
-              <div className="flex flex-wrap items-center justify-between gap-3 pt-2 text-xs text-ink-muted">
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-2 text-xs text-outline">
                 <a
                   href={doctorProfile.contact.instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-espresso underline underline-offset-4"
+                  className="hover:text-primary underline underline-offset-4"
                 >
                   <span dir="ltr">{doctorProfile.contact.instagramHandle}</span>
                 </a>
@@ -225,7 +223,7 @@ export function SiteHeader({ locale, dict }: SiteHeaderProps) {
                   href={doctorProfile.contact.whatsappDirectUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-espresso underline underline-offset-4"
+                  className="hover:text-primary underline underline-offset-4"
                 >
                   <span dir="ltr">{doctorProfile.contact.whatsappDisplay}</span>
                 </a>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import type { Locale } from "@/i18n/config";
@@ -15,6 +16,7 @@ import {
   type PreferredTimeKey,
   type RequestTypeKey,
 } from "@/content/consultation";
+import { StitchIcon, type StitchIconName } from "@/components/StitchIcon";
 
 interface ConsultationWizardProps {
   locale: Locale;
@@ -22,6 +24,12 @@ interface ConsultationWizardProps {
 }
 
 type StepNumber = 1 | 2 | 3;
+
+const requestTypeIconMap: Record<RequestTypeKey, StitchIconName> = {
+  appointment: "calendar",
+  "care-inquiry": "support",
+  "previous-followup": "cycle",
+};
 
 export function ConsultationWizard({ locale, dict }: ConsultationWizardProps) {
   const searchParams = useSearchParams();
@@ -43,6 +51,10 @@ function ConsultationWizardInner({
   initialQueryTopic,
 }: ConsultationWizardProps & { initialQueryTopic: string }) {
   const formUid = useId();
+  const dirArrow: StitchIconName =
+    locale === "ar" ? "arrow-back" : "arrow-forward";
+  const backArrow: StitchIconName =
+    locale === "ar" ? "arrow-forward" : "arrow-back";
 
   const [step, setStep] = useState<StepNumber>(1);
   const [requestType, setRequestType] = useState<RequestTypeKey>(() =>
@@ -56,7 +68,7 @@ function ConsultationWizardInner({
       isValidConsultationTopicKey(initialQueryTopic) ? [initialQueryTopic] : []
   );
 
-  // Step 2 state (kept strictly in component memory — never persisted to localStorage or DB)
+  // Step 2 state — strictly kept in component memory (never localStorage/DB)
   const [fullName, setFullName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [preferredLanguage, setPreferredLanguage] = useState<"ar" | "en">(
@@ -121,7 +133,6 @@ function ConsultationWizardInner({
     }
   };
 
-  // Resolve localized labels for summary & WhatsApp message
   const requestTypeLabel = useMemo(() => {
     return (
       requestTypeOptions.find((opt) => opt.key === requestType)?.label[
@@ -152,7 +163,6 @@ function ConsultationWizardInner({
     );
   }, [preferredTime, locale]);
 
-  // Construct clean WhatsApp message in UI language, omitting empty optional lines
   const composedMessage = useMemo(() => {
     const t = dict.consultation.whatsappTemplate;
     const lines: string[] = [
@@ -211,7 +221,6 @@ function ConsultationWizardInner({
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2500);
     } catch {
-      // Fallback copy if clipboard API restricted
       const textarea = document.createElement("textarea");
       textarea.value = composedMessage;
       textarea.style.position = "fixed";
@@ -231,568 +240,804 @@ function ConsultationWizardInner({
     { num: 3, title: dict.consultation.steps.step3 },
   ];
 
+  const progressWidthClass =
+    step === 1 ? "w-1/3" : step === 2 ? "w-2/3" : "w-full";
+
+  const sidebarPrinciples =
+    locale === "ar"
+      ? [
+          {
+            num: "01",
+            title: "خصوصية تامة وعدم تخزين للبيانات",
+            desc: "تُعالَج مدخلات النموذج داخل متصفحكِ فقط لتجهيز الرسالة دون حفظها في قواعد بيانات.",
+          },
+          {
+            num: "02",
+            title: "تنسيق مباشر مع الفريق",
+            desc: "تنتقلين برسالتكِ الجاهزة إلى واتساب لمراجعتها وإرسالها لفريق تنسيق المواعيد.",
+          },
+          {
+            num: "03",
+            title: "تقييم سريري مخصص في الرياض",
+            desc: "تُحدَّد خطة العناية المناسبة بعد الفحص المباشر مع الدكتورة غادة العتيبي.",
+          },
+        ]
+      : [
+          {
+            num: "01",
+            title: "Strict Privacy & Zero Storage",
+            desc: "Form entries stay only in active browser memory to format your message—never saved in databases.",
+          },
+          {
+            num: "02",
+            title: "Direct Team Coordination",
+            desc: "Review and send your prepared inquiry on WhatsApp to arrange an available slot.",
+          },
+          {
+            num: "03",
+            title: "In-Person Assessment in Riyadh",
+            desc: "Clinical recommendations are discussed personally during your consultation.",
+          },
+        ];
+
   return (
-    <div className="bg-canvas border border-hairline rounded-[4px] p-6 sm:p-9 lg:p-12">
-      {/* Progress Indicator */}
-      <ol
-        aria-label={dict.consultation.steps.stepIndicator}
-        className="grid grid-cols-3 gap-3 sm:gap-6 pb-8 mb-8 border-b border-hairline"
-      >
-        {stepsMeta.map((item) => {
-          const isActive = step === item.num;
-          const isCompleted = step > item.num;
-          return (
-            <li key={item.num} className="flex flex-col gap-2">
-              <div className="flex items-center gap-2">
-                <span
-                  className={`inline-flex items-center justify-center w-6 h-6 text-xs font-medium rounded-full border ${
-                    isActive
-                      ? "bg-espresso text-canvas border-espresso"
-                      : isCompleted
-                      ? "bg-sand text-espresso border-sand"
-                      : "bg-warm text-ink-muted border-hairline"
-                  }`}
-                >
-                  <span dir="ltr">0{item.num}</span>
-                </span>
-                <span
-                  className={`text-xs sm:text-sm ${
-                    isActive
-                      ? "text-espresso font-medium"
-                      : isCompleted
-                      ? "text-espresso"
-                      : "text-ink-muted"
-                  }`}
-                >
-                  {item.title}
-                </span>
-              </div>
-              <div
-                className={`h-[2px] w-full ${
-                  isActive || isCompleted ? "bg-espresso" : "bg-hairline"
+    <div className="space-y-8">
+      {/* Stitch Full-Width Top Stepper Indicator Bar */}
+      <div className="w-full bg-surface-low border border-surface-high rounded-xl p-4 sm:p-5 shadow-xs">
+        <ol
+          aria-label={dict.consultation.steps.stepIndicator}
+          className="grid grid-cols-3 gap-3 sm:gap-6 items-center"
+        >
+          {stepsMeta.map((item) => {
+            const isActive = step === item.num;
+            const isCompleted = step > item.num;
+            return (
+              <li
+                key={item.num}
+                className={`flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-3.5 ${
+                  isActive || isCompleted ? "opacity-100" : "opacity-55"
                 }`}
-                aria-hidden="true"
-              />
-            </li>
-          );
-        })}
-      </ol>
-
-      {/* STEP 1: Reason & Multi-Select Consultation Topics */}
-      {step === 1 && (
-        <div className="space-y-9">
-          {/* Request Type */}
-          <fieldset className="space-y-4">
-            <legend className="font-editorial text-xl sm:text-2xl text-espresso mb-2">
-              {dict.consultation.step1.requestTypeLabel}
-            </legend>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
-              {requestTypeOptions.map((opt) => {
-                const checked = requestType === opt.key;
-                const inputId = `${formUid}-req-${opt.key}`;
-                return (
-                  <label
-                    key={opt.key}
-                    htmlFor={inputId}
-                    className={`editorial-fade cursor-pointer flex flex-col justify-between p-4 border rounded-[3px] ${
-                      checked
-                        ? "border-espresso bg-warm"
-                        : "border-hairline bg-canvas hover:border-taupe"
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <span className="text-sm sm:text-base font-medium text-espresso">
-                        {opt.label[locale]}
-                      </span>
-                      <input
-                        id={inputId}
-                        type="radio"
-                        name="requestType"
-                        value={opt.key}
-                        checked={checked}
-                        onChange={() => {
-                          setRequestType(opt.key);
-                          setStep1Errors((e) => ({
-                            ...e,
-                            requestType: undefined,
-                          }));
-                        }}
-                        className="mt-1 h-4 w-4 accent-[#392C25]"
-                      />
-                    </div>
-                    {opt.hint && (
-                      <span className="text-xs text-ink-muted mt-2 leading-relaxed">
-                        {opt.hint[locale]}
-                      </span>
-                    )}
-                  </label>
-                );
-              })}
-            </div>
-            {step1Errors.requestType && (
-              <p role="alert" className="text-xs text-[#8a2c2c] font-medium">
-                {step1Errors.requestType}
-              </p>
-            )}
-          </fieldset>
-
-          {/* Multi-Select Consultation Topics */}
-          <fieldset className="space-y-4">
-            <legend className="font-editorial text-xl sm:text-2xl text-espresso">
-              {dict.consultation.step1.topicsLabel}
-            </legend>
-            <p className="text-xs sm:text-sm text-ink-soft">
-              {dict.consultation.step1.topicsHint}
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-              {consultationTopicOptions.map((topic) => {
-                const selected = selectedTopics.includes(topic.key);
-                const checkboxId = `${formUid}-topic-${topic.key}`;
-                return (
-                  <label
-                    key={topic.key}
-                    htmlFor={checkboxId}
-                    className={`editorial-fade cursor-pointer flex items-center justify-between gap-3 px-4 py-3.5 border rounded-[3px] ${
-                      selected
-                        ? "border-espresso bg-warm text-espresso font-medium"
-                        : "border-hairline bg-canvas text-ink-soft hover:border-taupe hover:text-espresso"
-                    }`}
-                  >
-                    <span className="text-sm">{topic.label[locale]}</span>
-                    <input
-                      id={checkboxId}
-                      type="checkbox"
-                      checked={selected}
-                      onChange={() => toggleTopic(topic.key)}
-                      className="h-4 w-4 accent-[#392C25] shrink-0"
-                    />
-                  </label>
-                );
-              })}
-            </div>
-
-            {step1Errors.topics && (
-              <p role="alert" className="text-xs text-[#8a2c2c] font-medium">
-                {step1Errors.topics}
-              </p>
-            )}
-
-            <p className="text-xs text-ink-muted bg-warm border-s-2 border-taupe px-4 py-3 leading-relaxed">
-              {dict.consultation.step1.routingDisclaimer}
-            </p>
-          </fieldset>
-
-          <div className="pt-2 flex justify-end">
-            <button
-              type="button"
-              onClick={handleContinueFromStep1}
-              className="editorial-fade w-full sm:w-auto bg-espresso text-canvas hover:bg-[#2a201b] px-7 py-3.5 text-sm font-medium rounded-[3px]"
-            >
-              {dict.consultation.step1.nextButton}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* STEP 2: Brief Contact Details */}
-      {step === 2 && (
-        <div className="space-y-7">
-          {/* Name (Required) */}
-          <div className="space-y-2">
-            <label
-              htmlFor={`${formUid}-name`}
-              className="block text-sm font-medium text-espresso"
-            >
-              {dict.consultation.step2.nameLabel}{" "}
-              <span className="text-taupe" aria-hidden="true">
-                *
-              </span>
-            </label>
-            <input
-              id={`${formUid}-name`}
-              type="text"
-              required
-              autoComplete="name"
-              value={fullName}
-              onChange={(e) => {
-                setFullName(e.target.value);
-                if (step2Errors.name) {
-                  setStep2Errors((prev) => ({ ...prev, name: undefined }));
-                }
-              }}
-              placeholder={dict.consultation.step2.namePlaceholder}
-              aria-invalid={Boolean(step2Errors.name)}
-              aria-describedby={
-                step2Errors.name ? `${formUid}-name-err` : undefined
-              }
-              className="w-full border border-hairline focus:border-espresso bg-canvas px-4 py-3 text-sm text-espresso rounded-[3px]"
-            />
-            {step2Errors.name && (
-              <p
-                id={`${formUid}-name-err`}
-                role="alert"
-                className="text-xs text-[#8a2c2c] font-medium"
               >
-                {step2Errors.name}
-              </p>
-            )}
-          </div>
-
-          {/* Contact Number (Optional, BiDi isolated) */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between gap-2">
-              <label
-                htmlFor={`${formUid}-phone`}
-                className="text-sm font-medium text-espresso"
-              >
-                {dict.consultation.step2.phoneLabel}
-              </label>
-              <span className="text-xs text-taupe">
-                {dict.consultation.step2.phoneOptionalTag}
-              </span>
-            </div>
-            <input
-              id={`${formUid}-phone`}
-              type="tel"
-              dir="ltr"
-              autoComplete="tel"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              placeholder={dict.consultation.step2.phonePlaceholder}
-              className="w-full border border-hairline focus:border-espresso bg-canvas px-4 py-3 text-sm text-espresso rounded-[3px] text-start"
-            />
-            <p className="text-xs text-ink-muted">
-              {dict.consultation.step2.phoneHint}
-            </p>
-          </div>
-
-          {/* Preferred Language & Preferred Contact Window */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <fieldset className="space-y-2">
-              <legend className="text-sm font-medium text-espresso">
-                {dict.consultation.step2.languageLabel}
-              </legend>
-              <div className="grid grid-cols-2 gap-3 pt-1">
-                {(["ar", "en"] as const).map((langOpt) => {
-                  const active = preferredLanguage === langOpt;
-                  const radioId = `${formUid}-pref-lang-${langOpt}`;
-                  return (
-                    <label
-                      key={langOpt}
-                      htmlFor={radioId}
-                      className={`editorial-fade cursor-pointer flex items-center justify-between px-4 py-2.5 border rounded-[3px] text-sm ${
-                        active
-                          ? "border-espresso bg-warm text-espresso font-medium"
-                          : "border-hairline bg-canvas text-ink-soft hover:border-taupe"
-                      }`}
-                    >
-                      <span>
-                        {langOpt === "ar"
-                          ? dict.consultation.step2.languageAr
-                          : dict.consultation.step2.languageEn}
-                      </span>
-                      <input
-                        id={radioId}
-                        type="radio"
-                        name="preferredLanguage"
-                        value={langOpt}
-                        checked={active}
-                        onChange={() => setPreferredLanguage(langOpt)}
-                        className="h-4 w-4 accent-[#392C25]"
-                      />
-                    </label>
-                  );
-                })}
-              </div>
-            </fieldset>
-
-            <div className="space-y-2">
-              <div className="flex items-center justify-between gap-2">
-                <label
-                  htmlFor={`${formUid}-time`}
-                  className="text-sm font-medium text-espresso"
+                <span
+                  dir="ltr"
+                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[11px] sm:text-xs font-semibold shrink-0 ${
+                    isActive
+                      ? "bg-primary-container text-on-primary"
+                      : isCompleted
+                      ? "bg-secondary-container text-primary"
+                      : "bg-surface-highest text-on-surface-variant"
+                  }`}
                 >
-                  {dict.consultation.step2.timeLabel}
-                </label>
-                <span className="text-xs text-taupe">
-                  {dict.consultation.step2.timeOptionalTag}
+                  0{item.num}
                 </span>
-              </div>
-              <select
-                id={`${formUid}-time`}
-                value={preferredTime}
-                onChange={(e) =>
-                  setPreferredTime(e.target.value as PreferredTimeKey | "")
-                }
-                className="w-full border border-hairline focus:border-espresso bg-canvas px-4 py-2.5 text-sm text-espresso rounded-[3px]"
-              >
-                <option value="">{dict.consultation.step2.timeNone}</option>
-                {preferredTimeOptions.map((opt) => (
-                  <option key={opt.key} value={opt.key}>
-                    {opt.label[locale]}
-                  </option>
-                ))}
-              </select>
-              <p className="text-xs text-ink-muted">
-                {dict.consultation.step2.timeHint}
-              </p>
-            </div>
-          </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="hidden sm:inline text-[10px] font-semibold text-secondary">
+                    {dict.consultation.steps.stepIndicator} 0{item.num}
+                  </span>
+                  <span className="text-[11.5px] sm:text-sm font-medium text-primary leading-snug">
+                    {item.title}
+                  </span>
+                </div>
+              </li>
+            );
+          })}
+        </ol>
 
-          {/* Short Note (Optional, max 300 chars + Sensitive Medical Data Advisory) */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between gap-2">
-              <label
-                htmlFor={`${formUid}-note`}
-                className="text-sm font-medium text-espresso"
-              >
-                {dict.consultation.step2.noteLabel}
-              </label>
-              <span className="text-xs text-taupe" dir="ltr">
-                {shortNote.length} / 300
-              </span>
-            </div>
-
-            <textarea
-              id={`${formUid}-note`}
-              rows={3}
-              maxLength={300}
-              value={shortNote}
-              onChange={(e) => setShortNote(e.target.value)}
-              placeholder={dict.consultation.step2.notePlaceholder}
-              aria-describedby={`${formUid}-sensitive-advisory`}
-              className="w-full border border-hairline focus:border-espresso bg-canvas px-4 py-3 text-sm text-espresso rounded-[3px] resize-y"
-            />
-
-            <p
-              id={`${formUid}-sensitive-advisory`}
-              className="text-xs text-espresso bg-warm border border-sand px-3.5 py-2.5 rounded-[3px]"
-            >
-              {dict.consultation.step2.sensitiveWarning}
-            </p>
-
-            {step2Errors.note && (
-              <p role="alert" className="text-xs text-[#8a2c2c] font-medium">
-                {step2Errors.note}
-              </p>
-            )}
-          </div>
-
-          {/* Navigation Buttons */}
-          <div className="pt-3 flex flex-col-reverse sm:flex-row items-center justify-between gap-3">
-            <button
-              type="button"
-              onClick={() => setStep(1)}
-              className="editorial-fade w-full sm:w-auto border border-hairline hover:border-espresso text-espresso px-6 py-3 text-sm rounded-[3px]"
-            >
-              {dict.consultation.step2.backButton}
-            </button>
-            <button
-              type="button"
-              onClick={handleContinueFromStep2}
-              className="editorial-fade w-full sm:w-auto bg-espresso text-canvas hover:bg-[#2a201b] px-7 py-3.5 text-sm font-medium rounded-[3px]"
-            >
-              {dict.consultation.step2.nextButton}
-            </button>
-          </div>
+        <div className="w-full bg-surface-highest h-1 rounded-full mt-4 overflow-hidden">
+          <div
+            className={`bg-primary-container h-full editorial-fade ${progressWidthClass}`}
+          />
         </div>
-      )}
+      </div>
 
-      {/* STEP 3: Review Summary, Message Preview & Explicit WhatsApp Consent */}
-      {step === 3 && (
-        <div className="space-y-8">
-          <div className="space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <h3 className="font-editorial text-xl sm:text-2xl text-espresso">
-                {dict.consultation.step3.summaryHeading}
-              </h3>
-              <div className="flex items-center gap-3 text-xs">
+      {/* Stitch 12-Col Form + Auxiliary Dossier Sidebar */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+        {/* Main Interactive Multi-Step Form Panel (8 cols) */}
+        <div className="lg:col-span-8 bg-surface-lowest border border-surface-high rounded-xl p-6 sm:p-9 lg:p-10 shadow-md">
+          {/* STEP 1 */}
+          {step === 1 && (
+            <div className="space-y-8">
+              <div className="space-y-1.5">
+                <span
+                  dir="ltr"
+                  className="inline-block font-en-label text-[10px] font-semibold text-secondary"
+                >
+                  Step 01 / Purpose
+                </span>
+                <h2 className="font-editorial text-2xl sm:text-[30px] text-primary">
+                  {dict.consultation.step1.requestTypeLabel}
+                </h2>
+                <p className="text-sm text-on-surface-variant">
+                  {dict.consultation.step1.topicsHint}
+                </p>
+              </div>
+
+              {/* Request Type Cards */}
+              <fieldset className="space-y-3">
+                <legend className="sr-only">
+                  {dict.consultation.step1.requestTypeLabel}
+                </legend>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                  {requestTypeOptions.map((opt) => {
+                    const checked = requestType === opt.key;
+                    const inputId = `${formUid}-req-${opt.key}`;
+                    return (
+                      <label
+                        key={opt.key}
+                        htmlFor={inputId}
+                        className={`editorial-fade cursor-pointer p-4 rounded-lg border flex flex-col justify-between gap-2.5 ${
+                          checked
+                            ? "bg-secondary-container/75 border-secondary text-primary shadow-xs"
+                            : "bg-surface-low border-surface-high hover:bg-surface-container"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <StitchIcon
+                            name={requestTypeIconMap[opt.key]}
+                            size={19}
+                            className={
+                              checked ? "text-primary" : "text-secondary"
+                            }
+                          />
+                          <input
+                            id={inputId}
+                            type="radio"
+                            name="requestType"
+                            value={opt.key}
+                            checked={checked}
+                            onChange={() => {
+                              setRequestType(opt.key);
+                              setStep1Errors((e) => ({
+                                ...e,
+                                requestType: undefined,
+                              }));
+                            }}
+                            className="h-4 w-4 accent-[#392C25]"
+                          />
+                        </div>
+                        <div>
+                          <span className="text-sm font-semibold text-primary block">
+                            {opt.label[locale]}
+                          </span>
+                          {opt.hint && (
+                            <span className="text-xs text-on-surface-variant mt-1 block leading-relaxed">
+                              {opt.hint[locale]}
+                            </span>
+                          )}
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+                {step1Errors.requestType && (
+                  <p role="alert" className="text-xs text-error font-medium">
+                    {step1Errors.requestType}
+                  </p>
+                )}
+              </fieldset>
+
+              {/* Multi-Select Consultation Topics */}
+              <fieldset className="space-y-3.5 pt-2">
+                <legend className="text-sm sm:text-base font-semibold text-primary">
+                  {dict.consultation.step1.topicsLabel}
+                </legend>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {consultationTopicOptions.map((topic) => {
+                    const selected = selectedTopics.includes(topic.key);
+                    const checkboxId = `${formUid}-topic-${topic.key}`;
+                    return (
+                      <label
+                        key={topic.key}
+                        htmlFor={checkboxId}
+                        className={`editorial-fade cursor-pointer flex items-center gap-3 p-3.5 rounded-lg border ${
+                          selected
+                            ? "bg-secondary-container/60 border-secondary text-primary font-medium"
+                            : "bg-surface-low border-surface-high text-on-surface hover:bg-surface-container"
+                        }`}
+                      >
+                        <input
+                          id={checkboxId}
+                          type="checkbox"
+                          checked={selected}
+                          onChange={() => toggleTopic(topic.key)}
+                          className="h-4 w-4 accent-[#392C25] rounded shrink-0"
+                        />
+                        <span className="text-sm">{topic.label[locale]}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+
+                {step1Errors.topics && (
+                  <p role="alert" className="text-xs text-error font-medium">
+                    {step1Errors.topics}
+                  </p>
+                )}
+
+                <div className="flex items-start gap-2.5 bg-surface-container p-4 rounded-lg text-xs text-on-surface-variant leading-relaxed">
+                  <StitchIcon
+                    name="info"
+                    size={17}
+                    className="text-secondary shrink-0 mt-0.5"
+                  />
+                  <p>{dict.consultation.step1.routingDisclaimer}</p>
+                </div>
+              </fieldset>
+
+              <div className="flex justify-end pt-2">
                 <button
                   type="button"
-                  onClick={() => setStep(1)}
-                  className="text-espresso underline underline-offset-4 hover:text-taupe"
+                  onClick={handleContinueFromStep1}
+                  className="editorial-fade w-full sm:w-auto h-12 px-8 bg-primary-container text-on-primary text-xs font-medium rounded inline-flex items-center justify-center gap-2 hover:bg-primary-hover shadow-xs"
                 >
-                  {dict.consultation.step3.editStep1}
-                </button>
-                <span className="text-hairline">|</span>
-                <button
-                  type="button"
-                  onClick={() => setStep(2)}
-                  className="text-espresso underline underline-offset-4 hover:text-taupe"
-                >
-                  {dict.consultation.step3.editStep2}
+                  <span>{dict.consultation.step1.nextButton}</span>
+                  <StitchIcon name={dirArrow} size={15} />
                 </button>
               </div>
-            </div>
-
-            {/* Structured Editable Summary */}
-            <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-warm border border-hairline p-5 rounded-[3px] text-sm">
-              <div>
-                <dt className="text-xs text-ink-muted">
-                  {dict.consultation.whatsappTemplate.name}
-                </dt>
-                <dd className="text-espresso font-medium mt-0.5">{fullName}</dd>
-              </div>
-              <div>
-                <dt className="text-xs text-ink-muted">
-                  {dict.consultation.whatsappTemplate.requestType}
-                </dt>
-                <dd className="text-espresso font-medium mt-0.5">
-                  {requestTypeLabel}
-                </dd>
-              </div>
-              <div className="sm:col-span-2">
-                <dt className="text-xs text-ink-muted">
-                  {dict.consultation.whatsappTemplate.topics}
-                </dt>
-                <dd className="text-espresso font-medium mt-0.5">
-                  {selectedTopicLabels}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-xs text-ink-muted">
-                  {dict.consultation.whatsappTemplate.language}
-                </dt>
-                <dd className="text-espresso mt-0.5">
-                  {preferredLanguageLabel}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-xs text-ink-muted">
-                  {dict.consultation.whatsappTemplate.preferredTime}
-                </dt>
-                <dd className="text-espresso mt-0.5">
-                  {preferredTimeLabel || dict.consultation.step3.notProvided}
-                </dd>
-              </div>
-              {phoneNumber.trim() && (
-                <div>
-                  <dt className="text-xs text-ink-muted">
-                    {dict.consultation.step2.phoneLabel}
-                  </dt>
-                  <dd className="text-espresso mt-0.5">
-                    <span dir="ltr">{phoneNumber.trim()}</span>
-                  </dd>
-                </div>
-              )}
-              {shortNote.trim() && (
-                <div className="sm:col-span-2">
-                  <dt className="text-xs text-ink-muted">
-                    {dict.consultation.whatsappTemplate.notes}
-                  </dt>
-                  <dd className="text-espresso mt-0.5 whitespace-pre-wrap">
-                    {shortNote.trim()}
-                  </dd>
-                </div>
-              )}
-            </dl>
-          </div>
-
-          {/* Exact WhatsApp Message Preview */}
-          <div className="space-y-2.5">
-            <div className="flex items-center justify-between gap-3">
-              <h4 className="text-sm font-medium text-espresso">
-                {dict.consultation.step3.previewHeading}
-              </h4>
-              <button
-                type="button"
-                onClick={handleCopyMessage}
-                className="editorial-fade text-xs border border-hairline hover:border-espresso px-3 py-1.5 rounded-[3px] text-espresso"
-              >
-                {copied
-                  ? dict.consultation.step3.copiedMessage
-                  : dict.consultation.step3.copyMessage}
-              </button>
-            </div>
-            <p className="text-xs text-ink-muted">
-              {dict.consultation.step3.previewHint}
-            </p>
-            <pre className="w-full whitespace-pre-wrap font-sans text-xs sm:text-sm leading-relaxed bg-canvas border border-hairline p-4 rounded-[3px] text-espresso">
-              {composedMessage}
-            </pre>
-          </div>
-
-            {/* Unchecked-by-default Consent */}
-          <div className="space-y-2 pt-1">
-            <label
-              htmlFor={`${formUid}-consent`}
-              className="cursor-pointer flex items-start gap-3 p-4 border border-hairline bg-warm rounded-[3px]"
-            >
-              <input
-                id={`${formUid}-consent`}
-                type="checkbox"
-                checked={consentChecked}
-                onChange={(e) => {
-                  setConsentChecked(e.target.checked);
-                  if (e.target.checked) setConsentError(undefined);
-                }}
-                className="mt-1 h-4 w-4 accent-[#392C25] shrink-0"
-              />
-              <span className="text-xs sm:text-sm text-espresso leading-relaxed">
-                {dict.consultation.step3.consentLabel}{" "}
-                <span aria-hidden="true">·</span>{" "}
-                <Link
-                  href={`/${locale}/privacy`}
-                  className="underline underline-offset-4 text-ink-soft hover:text-espresso"
-                >
-                  {dict.consultation.step3.privacyLinkText}
-                </Link>
-              </span>
-            </label>
-            {consentError && (
-              <p role="alert" className="text-xs text-[#8a2c2c] font-medium">
-                {consentError}
-              </p>
-            )}
-          </div>
-
-          {/* Honest Post-Click Coordination Notice (Never claims booking is confirmed) */}
-          {whatsappOpened && (
-            <div
-              role="status"
-              className="p-4 bg-warm border-s-2 border-espresso text-xs sm:text-sm text-espresso leading-relaxed"
-            >
-              {dict.consultation.step3.openedReminder}
             </div>
           )}
 
-          {/* Primary WhatsApp Action + Back & Direct Fallback */}
-          <div className="pt-2 space-y-4">
-            <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-3">
-              <button
-                type="button"
-                onClick={() => setStep(2)}
-                className="editorial-fade w-full sm:w-auto border border-hairline hover:border-espresso text-espresso px-6 py-3 text-sm rounded-[3px]"
-              >
-                {dict.consultation.step3.backButton}
-              </button>
+          {/* STEP 2 */}
+          {step === 2 && (
+            <div className="space-y-7">
+              <div className="space-y-1.5">
+                <span
+                  dir="ltr"
+                  className="inline-block font-en-label text-[10px] font-semibold text-secondary"
+                >
+                  Step 02 / Coordinator Info
+                </span>
+                <h2 className="font-editorial text-2xl sm:text-[30px] text-primary">
+                  {dict.consultation.steps.step2}
+                </h2>
+              </div>
 
-              <button
-                type="button"
-                onClick={handleContinueOnWhatsapp}
-                className="editorial-fade w-full sm:w-auto bg-espresso text-canvas hover:bg-[#2a201b] px-8 py-3.5 text-sm font-medium rounded-[3px]"
+              {/* Sensitive Medical Data Advisory Banner */}
+              <div
+                id={`${formUid}-sensitive-advisory`}
+                className="flex items-start gap-3 bg-tertiary-fixed/75 border border-outline-variant p-4 rounded-lg text-xs sm:text-[13px] text-primary leading-relaxed"
               >
-                {dict.consultation.step3.submitWhatsapp}
-              </button>
+                <StitchIcon
+                  name="lock"
+                  size={17}
+                  className="text-secondary shrink-0 mt-0.5"
+                />
+                <p>{dict.consultation.step2.sensitiveWarning}</p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                {/* Name (Required) */}
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor={`${formUid}-name`}
+                    className="text-xs sm:text-sm font-medium text-primary flex items-center justify-between"
+                  >
+                    <span>
+                      {dict.consultation.step2.nameLabel}{" "}
+                      <span className="text-error" aria-hidden="true">
+                        *
+                      </span>
+                    </span>
+                  </label>
+                  <input
+                    id={`${formUid}-name`}
+                    type="text"
+                    required
+                    autoComplete="name"
+                    value={fullName}
+                    onChange={(e) => {
+                      setFullName(e.target.value);
+                      if (step2Errors.name) {
+                        setStep2Errors((prev) => ({
+                          ...prev,
+                          name: undefined,
+                        }));
+                      }
+                    }}
+                    placeholder={dict.consultation.step2.namePlaceholder}
+                    aria-invalid={Boolean(step2Errors.name)}
+                    aria-describedby={
+                      step2Errors.name ? `${formUid}-name-err` : undefined
+                    }
+                    className="w-full h-12 px-4 rounded bg-surface-low border border-surface-high focus:bg-surface-lowest focus:border-primary text-sm text-on-surface outline-none"
+                  />
+                  {step2Errors.name && (
+                    <p
+                      id={`${formUid}-name-err`}
+                      role="alert"
+                      className="text-xs text-error font-medium"
+                    >
+                      {step2Errors.name}
+                    </p>
+                  )}
+                </div>
+
+                {/* Contact Number (Optional) */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label
+                      htmlFor={`${formUid}-phone`}
+                      className="text-xs sm:text-sm font-medium text-primary"
+                    >
+                      {dict.consultation.step2.phoneLabel}
+                    </label>
+                    <span className="text-[11px] text-secondary">
+                      {dict.consultation.step2.phoneOptionalTag}
+                    </span>
+                  </div>
+                  <input
+                    id={`${formUid}-phone`}
+                    type="tel"
+                    dir="ltr"
+                    autoComplete="tel"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    placeholder={dict.consultation.step2.phonePlaceholder}
+                    className="w-full h-12 px-4 rounded bg-surface-low border border-surface-high focus:bg-surface-lowest focus:border-primary text-sm text-on-surface outline-none text-start"
+                  />
+                  <p className="text-[11.5px] text-outline">
+                    {dict.consultation.step2.phoneHint}
+                  </p>
+                </div>
+
+                {/* Preferred Language */}
+                <fieldset className="space-y-1.5">
+                  <legend className="text-xs sm:text-sm font-medium text-primary">
+                    {dict.consultation.step2.languageLabel}
+                  </legend>
+                  <div className="grid grid-cols-2 gap-2.5 h-12">
+                    {(["ar", "en"] as const).map((langOpt) => {
+                      const active = preferredLanguage === langOpt;
+                      const radioId = `${formUid}-pref-lang-${langOpt}`;
+                      return (
+                        <label
+                          key={langOpt}
+                          htmlFor={radioId}
+                          className={`editorial-fade cursor-pointer h-full rounded border flex items-center justify-center gap-2 text-xs sm:text-sm ${
+                            active
+                              ? "bg-secondary-container/75 border-secondary text-primary font-semibold"
+                              : "bg-surface-low border-surface-high text-on-surface-variant hover:bg-surface-container"
+                          }`}
+                        >
+                          <input
+                            id={radioId}
+                            type="radio"
+                            name="preferredLanguage"
+                            value={langOpt}
+                            checked={active}
+                            onChange={() => setPreferredLanguage(langOpt)}
+                            className="sr-only"
+                          />
+                          <span>
+                            {langOpt === "ar"
+                              ? dict.consultation.step2.languageAr
+                              : dict.consultation.step2.languageEn}
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </fieldset>
+
+                {/* Preferred Contact Window */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label
+                      htmlFor={`${formUid}-time`}
+                      className="text-xs sm:text-sm font-medium text-primary"
+                    >
+                      {dict.consultation.step2.timeLabel}
+                    </label>
+                    <span className="text-[11px] text-secondary">
+                      {dict.consultation.step2.timeOptionalTag}
+                    </span>
+                  </div>
+                  <select
+                    id={`${formUid}-time`}
+                    value={preferredTime}
+                    onChange={(e) =>
+                      setPreferredTime(e.target.value as PreferredTimeKey | "")
+                    }
+                    className="w-full h-12 px-4 rounded bg-surface-low border border-surface-high focus:bg-surface-lowest focus:border-primary text-sm text-on-surface outline-none"
+                  >
+                    <option value="">{dict.consultation.step2.timeNone}</option>
+                    {preferredTimeOptions.map((opt) => (
+                      <option key={opt.key} value={opt.key}>
+                        {opt.label[locale]}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-[11.5px] text-outline">
+                    {dict.consultation.step2.timeHint}
+                  </p>
+                </div>
+              </div>
+
+              {/* Short Note (Optional, max 300 chars) */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label
+                    htmlFor={`${formUid}-note`}
+                    className="text-xs sm:text-sm font-medium text-primary"
+                  >
+                    {dict.consultation.step2.noteLabel}
+                  </label>
+                  <span className="text-xs text-secondary" dir="ltr">
+                    {shortNote.length} / 300
+                  </span>
+                </div>
+                <textarea
+                  id={`${formUid}-note`}
+                  rows={3}
+                  maxLength={300}
+                  value={shortNote}
+                  onChange={(e) => setShortNote(e.target.value)}
+                  placeholder={dict.consultation.step2.notePlaceholder}
+                  aria-describedby={`${formUid}-sensitive-advisory`}
+                  className="w-full p-4 rounded bg-surface-low border border-surface-high focus:bg-surface-lowest focus:border-primary text-sm text-on-surface outline-none resize-y"
+                />
+                {step2Errors.note && (
+                  <p role="alert" className="text-xs text-error font-medium">
+                    {step2Errors.note}
+                  </p>
+                )}
+              </div>
+
+              <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  className="editorial-fade h-12 px-6 bg-surface-container text-primary text-xs font-medium rounded inline-flex items-center justify-center gap-2 hover:bg-surface-high"
+                >
+                  <StitchIcon name={backArrow} size={15} />
+                  <span>{dict.consultation.step2.backButton}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleContinueFromStep2}
+                  className="editorial-fade h-12 px-8 bg-primary-container text-on-primary text-xs font-medium rounded inline-flex items-center justify-center gap-2 hover:bg-primary-hover shadow-xs"
+                >
+                  <span>{dict.consultation.step2.nextButton}</span>
+                  <StitchIcon name={dirArrow} size={15} />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 3 */}
+          {step === 3 && (
+            <div className="space-y-7">
+              <div className="space-y-1.5">
+                <span
+                  dir="ltr"
+                  className="inline-block font-en-label text-[10px] font-semibold text-secondary"
+                >
+                  Step 03 / Review &amp; WhatsApp Handoff
+                </span>
+                <h2 className="font-editorial text-2xl sm:text-[30px] text-primary">
+                  {dict.consultation.step3.summaryHeading}
+                </h2>
+              </div>
+
+              {/* Editable Summary Card */}
+              <div className="bg-surface-low border border-surface-high p-5 sm:p-6 rounded-xl space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-surface-high pb-3 text-xs">
+                  <span className="font-semibold text-secondary">
+                    {dict.consultation.steps.step3}
+                  </span>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setStep(1)}
+                      className="text-primary underline underline-offset-4 hover:text-secondary"
+                    >
+                      {dict.consultation.step3.editStep1}
+                    </button>
+                    <span className="text-outline-variant">|</span>
+                    <button
+                      type="button"
+                      onClick={() => setStep(2)}
+                      className="text-primary underline underline-offset-4 hover:text-secondary"
+                    >
+                      {dict.consultation.step3.editStep2}
+                    </button>
+                  </div>
+                </div>
+
+                <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs sm:text-sm">
+                  <div>
+                    <dt className="text-secondary text-xs">
+                      {dict.consultation.whatsappTemplate.name}
+                    </dt>
+                    <dd className="text-primary font-semibold mt-0.5">
+                      {fullName}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-secondary text-xs">
+                      {dict.consultation.whatsappTemplate.requestType}
+                    </dt>
+                    <dd className="text-primary font-semibold mt-0.5">
+                      {requestTypeLabel}
+                    </dd>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <dt className="text-secondary text-xs">
+                      {dict.consultation.whatsappTemplate.topics}
+                    </dt>
+                    <dd className="text-primary font-semibold mt-0.5">
+                      {selectedTopicLabels}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-secondary text-xs">
+                      {dict.consultation.whatsappTemplate.language}
+                    </dt>
+                    <dd className="text-primary mt-0.5">
+                      {preferredLanguageLabel}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-secondary text-xs">
+                      {dict.consultation.whatsappTemplate.preferredTime}
+                    </dt>
+                    <dd className="text-primary mt-0.5">
+                      {preferredTimeLabel ||
+                        dict.consultation.step3.notProvided}
+                    </dd>
+                  </div>
+                  {phoneNumber.trim() && (
+                    <div>
+                      <dt className="text-secondary text-xs">
+                        {dict.consultation.step2.phoneLabel}
+                      </dt>
+                      <dd className="text-primary mt-0.5">
+                        <span dir="ltr">{phoneNumber.trim()}</span>
+                      </dd>
+                    </div>
+                  )}
+                  {shortNote.trim() && (
+                    <div className="sm:col-span-2">
+                      <dt className="text-secondary text-xs">
+                        {dict.consultation.whatsappTemplate.notes}
+                      </dt>
+                      <dd className="text-primary mt-0.5 whitespace-pre-wrap">
+                        {shortNote.trim()}
+                      </dd>
+                    </div>
+                  )}
+                </dl>
+              </div>
+
+              {/* Live WhatsApp Message Preview */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs sm:text-sm font-medium text-primary inline-flex items-center gap-2">
+                    <StitchIcon
+                      name="chat"
+                      size={16}
+                      className="text-secondary"
+                    />
+                    <span>{dict.consultation.step3.previewHeading}</span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleCopyMessage}
+                    className="editorial-fade inline-flex items-center gap-1.5 text-xs text-secondary hover:text-primary border border-surface-high bg-surface-low px-3 py-1.5 rounded"
+                  >
+                    <StitchIcon name="copy" size={14} />
+                    <span>
+                      {copied
+                        ? dict.consultation.step3.copiedMessage
+                        : dict.consultation.step3.copyMessage}
+                    </span>
+                  </button>
+                </div>
+
+                <p className="text-xs text-outline">
+                  {dict.consultation.step3.previewHint}
+                </p>
+
+                <pre className="w-full bg-surface-container border border-surface-high p-4 rounded-lg font-sans text-xs sm:text-sm text-on-surface whitespace-pre-wrap leading-relaxed">
+                  {composedMessage}
+                </pre>
+              </div>
+
+              {/* Explicit Unchecked-by-Default Consent */}
+              <div className="space-y-2">
+                <label
+                  htmlFor={`${formUid}-consent`}
+                  className="cursor-pointer flex items-start gap-3 p-4 rounded-lg bg-surface-low border border-surface-high hover:bg-surface-container editorial-fade"
+                >
+                  <input
+                    id={`${formUid}-consent`}
+                    type="checkbox"
+                    checked={consentChecked}
+                    onChange={(e) => {
+                      setConsentChecked(e.target.checked);
+                      if (e.target.checked) setConsentError(undefined);
+                    }}
+                    className="w-4 h-4 accent-[#392C25] rounded mt-1 shrink-0"
+                  />
+                  <span className="text-xs sm:text-sm text-on-surface leading-relaxed">
+                    {dict.consultation.step3.consentLabel}{" "}
+                    <span aria-hidden="true">·</span>{" "}
+                    <Link
+                      href={`/${locale}/privacy`}
+                      className="underline underline-offset-4 text-secondary hover:text-primary"
+                    >
+                      {dict.consultation.step3.privacyLinkText}
+                    </Link>
+                  </span>
+                </label>
+
+                {consentError && (
+                  <p role="alert" className="text-xs text-error font-medium">
+                    {consentError}
+                  </p>
+                )}
+              </div>
+
+              {/* Post-Click Honest Reminder */}
+              {whatsappOpened && (
+                <div
+                  role="status"
+                  className="p-4 rounded-lg bg-tertiary-fixed/75 border-s-2 border-primary-container text-xs sm:text-sm text-primary leading-relaxed"
+                >
+                  {dict.consultation.step3.openedReminder}
+                </div>
+              )}
+
+              {/* Actions */}
+              <div className="space-y-4 pt-1">
+                <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setStep(2)}
+                    className="editorial-fade h-12 px-6 bg-surface-container text-primary text-xs font-medium rounded inline-flex items-center justify-center gap-2 hover:bg-surface-high"
+                  >
+                    <StitchIcon name={backArrow} size={15} />
+                    <span>{dict.consultation.step3.backButton}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleContinueOnWhatsapp}
+                    className="editorial-fade h-12 px-8 bg-primary-container text-on-primary text-xs font-medium rounded inline-flex items-center justify-center gap-2.5 hover:bg-primary-hover shadow-md"
+                  >
+                    <StitchIcon name="send" size={16} />
+                    <span>{dict.consultation.step3.submitWhatsapp}</span>
+                  </button>
+                </div>
+
+                <div className="pt-3 border-t border-surface-high flex flex-wrap items-center justify-between gap-3 text-xs text-outline">
+                  <span>{dict.consultation.coordinationNotice}</span>
+                  <a
+                    href={doctorProfile.contact.whatsappDirectUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-primary underline underline-offset-4 hover:text-secondary font-medium"
+                  >
+                    <span>
+                      {dict.consultation.step3.directWhatsappFallback}
+                    </span>
+                    <span aria-hidden="true">·</span>
+                    <span dir="ltr">
+                      {doctorProfile.contact.whatsappDisplay}
+                    </span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Stitch Auxiliary Sidebar (4 cols — Verified Facts Only) */}
+        <aside className="lg:col-span-4 flex flex-col gap-5">
+          {/* Doctor Dossier Snapshot Card */}
+          <div className="bg-surface-lowest border border-surface-high p-6 rounded-xl shadow-xs flex flex-col gap-4">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full overflow-hidden bg-surface-container shrink-0 border border-surface-high">
+                <Image
+                  src={doctorProfile.portraits.hero.src}
+                  alt={doctorProfile.portraits.hero.alt[locale]}
+                  width={200}
+                  height={200}
+                  className="w-full h-full object-cover object-top"
+                />
+              </div>
+              <div className="flex flex-col">
+                <span className="font-editorial text-xl text-primary">
+                  {doctorProfile.shortSignature[locale]}
+                </span>
+                <span className="text-xs font-medium text-secondary">
+                  {doctorProfile.title[locale]}
+                </span>
+                <span className="text-[11px] text-outline mt-0.5">
+                  {doctorProfile.city[locale]}
+                </span>
+              </div>
             </div>
 
-            <div className="pt-2 border-t border-hairline flex flex-wrap items-center justify-between gap-3 text-xs text-ink-muted">
-              <span>{dict.consultation.coordinationNotice}</span>
-              <a
-                href={doctorProfile.contact.whatsappDirectUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-espresso underline underline-offset-4 hover:text-taupe font-medium"
-              >
-                <span>{dict.consultation.step3.directWhatsappFallback}</span>
-                <span aria-hidden="true">·</span>
-                <span dir="ltr">{doctorProfile.contact.whatsappDisplay}</span>
-              </a>
+            <p className="text-xs sm:text-[13px] text-on-surface-variant leading-relaxed">
+              {doctorProfile.specializationSummary[locale]}
+            </p>
+
+            <div className="w-full bg-surface-low border border-surface-high/70 p-3.5 rounded-lg flex flex-col gap-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-secondary">
+                  {dict.about.coordinationLabel}:
+                </span>
+                <a
+                  href={doctorProfile.contact.whatsappDirectUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary font-semibold hover:text-secondary underline underline-offset-4"
+                >
+                  <span dir="ltr">{doctorProfile.contact.whatsappDisplay}</span>
+                </a>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-secondary">
+                  {dict.about.locationLabel}:
+                </span>
+                <span className="text-primary font-medium">
+                  {doctorProfile.cityShort[locale]}
+                </span>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+
+          {/* 3 Coordination Principles Card */}
+          <div className="bg-surface-low border border-surface-high p-6 rounded-xl shadow-xs flex flex-col gap-4">
+            <span className="editorial-kicker">
+              {locale === "ar"
+                ? "مبادئ التنسيق والخصوصية"
+                : "Coordination & Privacy Principles"}
+            </span>
+            {sidebarPrinciples.map((p) => (
+              <div key={p.num} className="flex items-start gap-3">
+                <span
+                  dir="ltr"
+                  className="w-6 h-6 rounded-full bg-surface-highest text-secondary flex items-center justify-center text-[11px] font-semibold shrink-0 mt-0.5"
+                >
+                  {p.num}
+                </span>
+                <div className="flex flex-col">
+                  <span className="text-xs font-semibold text-primary">
+                    {p.title}
+                  </span>
+                  <span className="text-xs text-on-surface-variant mt-0.5 leading-relaxed">
+                    {p.desc}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Calm Editorial Environment Visual Card */}
+          <div className="rounded-xl overflow-hidden shadow-xs relative h-44 bg-surface-container border border-surface-high">
+            <Image
+              src={doctorProfile.editorialStillLife.linen.src}
+              alt={doctorProfile.editorialStillLife.linen.alt[locale]}
+              width={doctorProfile.editorialStillLife.linen.width}
+              height={doctorProfile.editorialStillLife.linen.height}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-primary/65 via-primary/15 to-transparent p-4 flex flex-col justify-end text-on-primary">
+              <span className="text-[10px] font-semibold opacity-90">
+                {doctorProfile.cityShort[locale]}
+              </span>
+              <span className="font-editorial text-lg">
+                {locale === "ar"
+                  ? "هدوء، خصوصية، وعناية متخصصة"
+                  : "Calm, discreet dermatological care"}
+              </span>
+            </div>
+          </div>
+        </aside>
+      </div>
     </div>
   );
 }

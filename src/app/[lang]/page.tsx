@@ -4,10 +4,23 @@ import { notFound } from "next/navigation";
 import { isValidLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { accountTopics, doctorProfile } from "@/content/doctor";
-import { consultationFaqs } from "@/content/consultation";
-import { getPublicArticles, articleCategories } from "@/content/articles";
+import { areasOfCare } from "@/content/areas";
+import { articleCategories, getPublicArticles } from "@/content/articles";
 import { getPublicReviews } from "@/content/reviews";
-import { HomeQuickConsultationCard } from "@/components/HomeQuickConsultationCard";
+import { StitchIcon, type StitchIconName } from "@/components/StitchIcon";
+
+const areaIconMap: Record<string, StitchIconName> = {
+  "skin-health": "dermatology",
+  "hair-scalp": "hair",
+  "skin-aging": "hourglass",
+  "cosmetic-rejuvenation": "sparkle",
+};
+
+const topicImageMap: Record<string, string> = {
+  "eye-area-care": "/images/editorial/topic-eye-contour.jpg",
+  "neck-elasticity": "/images/editorial/topic-neck-profile.jpg",
+  "pores-skin-care": "/images/editorial/topic-pores-droplets.jpg",
+};
 
 export default async function HomePage({
   params,
@@ -21,243 +34,406 @@ export default async function HomePage({
   const dict = getDictionary(locale);
   const publicArticles = getPublicArticles(locale);
   const publicReviews = getPublicReviews(locale);
-  const arrow = locale === "ar" ? "←" : "→";
+  const dirArrow: StitchIconName =
+    locale === "ar" ? "arrow-back" : "arrow-forward";
 
-  const pillarStrip = [
-    {
-      href: `/${locale}/areas-of-care#skin-health`,
-      label: locale === "ar" ? "صحة البشرة" : "Skin Health",
-      icon: (
-        <svg
-          width="22"
-          height="22"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.35"
-          aria-hidden="true"
-        >
-          <path
-            d="M12 3.5C12 3.5 6.5 10.2 6.5 14.5a5.5 5.5 0 0 0 11 0C17.5 10.2 12 3.5 12 3.5Z"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
-    },
-    {
-      href: `/${locale}/areas-of-care#hair-scalp`,
-      label: locale === "ar" ? "العناية بالشعر" : "Hair Care",
-      icon: (
-        <svg
-          width="22"
-          height="22"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.35"
-          aria-hidden="true"
-        >
-          <path
-            d="M12 20c0-5 2.5-9.5 4.5-14M9.5 19.5c.4-3.8 1.8-7.4 3.3-11M7 17.5c2.2 .8 6.8 .8 10 0"
-            strokeLinecap="round"
-          />
-        </svg>
-      ),
-    },
-    {
-      href: `/${locale}/areas-of-care#cosmetic-rejuvenation`,
-      label: locale === "ar" ? "تجديد الجلد" : "Skin Rejuvenation",
-      icon: (
-        <svg
-          width="22"
-          height="22"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.35"
-          aria-hidden="true"
-        >
-          <path
-            d="M12 4.5 4.5 8.5 12 12.5l7.5-4L12 4.5Z"
-            strokeLinejoin="round"
-          />
-          <path
-            d="m4.5 12.2 7.5 4 7.5-4M4.5 15.8l7.5 4 7.5-4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
-    },
-    {
-      href: `/${locale}/areas-of-care#skin-aging`,
-      label: locale === "ar" ? "العناية مع تقدم العمر" : "Well-Aging Care",
-      icon: (
-        <svg
-          width="22"
-          height="22"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.35"
-          aria-hidden="true"
-        >
-          <path
-            d="M12 6c1.8 2.4 2.7 5 2.4 8-2.4-.3-4.8-.3-4.8 0-.3-3 .6-5.6 2.4-8Z"
-            strokeLinejoin="round"
-          />
-          <path
-            d="M12 14c2.8-2.2 5.5-2.6 7.5-1.5-.8 3-3.4 4.8-7.5 4.8-4.1 0-6.7-1.8-7.5-4.8 2-1.1 4.7-.7 7.5 1.5Z"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
-    },
-  ];
-
-  const visualCareCards = [
-    {
-      id: "skin-radiance",
-      href: `/${locale}/areas-of-care#skin-health`,
-      src: "/images/editorial/care-skin-radiance.jpg",
-      alt:
-        locale === "ar"
-          ? "صورة تعبيرية لنضارة البشرة وصحتها"
-          : "Editorial close-up representing skin radiance and hydration",
-      label: locale === "ar" ? "البشرة ونضارتها" : "Skin & Radiance",
-    },
-    {
-      id: "hair-scalp-card",
-      href: `/${locale}/areas-of-care#hair-scalp`,
-      src: "/images/editorial/care-hair-waves.jpg",
-      alt:
-        locale === "ar"
-          ? "صورة تعبيرية للعناية بالشعر وفروة الرأس"
-          : "Editorial hair texture representing hair and scalp care",
-      label: locale === "ar" ? "الشعر وفروة الرأس" : "Hair & Scalp",
-    },
-    {
-      id: "skin-rejuvenation-card",
-      href: `/${locale}/areas-of-care#cosmetic-rejuvenation`,
-      src: "/images/editorial/care-serum-dropper.jpg",
-      alt:
-        locale === "ar"
-          ? "صورة تعبيرية لتجديد الجلد والعناية المتخصصة"
-          : "Editorial dropper close-up representing skin rejuvenation",
-      label: locale === "ar" ? "تجديد الجلد" : "Skin Rejuvenation",
-    },
-  ];
-
-  const topicImageMap: Record<string, string> = {
-    "eye-area-care": "/images/editorial/topic-eye-contour.jpg",
-    "neck-elasticity": "/images/editorial/topic-neck-profile.jpg",
-    "pores-skin-care": "/images/editorial/topic-pores-droplets.jpg",
-  };
+  const heroIndicators =
+    locale === "ar"
+      ? [
+          {
+            kicker: "التقييم",
+            title: "فردي ومباشر",
+            desc: "قراءة احتياج البشرة والشعر الفعلي أثناء الاستشارة",
+          },
+          {
+            kicker: "الاهتمام الدقيق",
+            title: "البشرة والشعر",
+            desc: "مقاومة شيخوختهما وتجميل الجلد وتجديده",
+          },
+          {
+            kicker: "الموقع",
+            title: "الرياض",
+            desc: "تنسيق مواعيد منظم يحترم خصوصيتكِ",
+          },
+        ]
+      : [
+          {
+            kicker: "Assessment",
+            title: "Individualized",
+            desc: "In-person clinical reading of skin and scalp needs",
+          },
+          {
+            kicker: "Special Focus",
+            title: "Skin & Hair",
+            desc: "Well-aging care, cosmetic dermatology, and rejuvenation",
+          },
+          {
+            kicker: "Location",
+            title: "Riyadh",
+            desc: "Structured appointment coordination with discretion",
+          },
+        ];
 
   return (
-    <div className="bg-canvas">
-      {/* 1. ARCH EDITORIAL HERO */}
-      <section className="mx-auto max-w-6xl px-5 sm:px-8 lg:px-10 pt-8 pb-12 sm:pt-12 sm:pb-16 lg:pt-14 lg:pb-20">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-          {/* Copy Column (Start Side — Right in RTL, Left in LTR) */}
-          <div className="lg:col-span-6 space-y-6 sm:space-y-7 order-1">
-            <div className="space-y-1">
-              <p className="text-base sm:text-lg font-semibold text-espresso">
-                {doctorProfile.shortSignature[locale]}
-              </p>
-              <p className="text-xs sm:text-sm text-ink-muted">
-                {doctorProfile.title[locale]} · {doctorProfile.cityShort[locale]}
-              </p>
-            </div>
+    <div className="flex flex-col w-full bg-surface">
+      {/* Top Subtle Context Ribbon (Stitch Shell Bar — Verified Facts Only) */}
+      <section className="w-full bg-surface-low border-b border-surface-high py-2.5">
+        <div className="mx-auto max-w-[1440px] px-5 md:px-12 lg:px-16 flex flex-wrap items-center justify-between gap-2 text-[11px] font-medium text-secondary">
+          <div className="flex items-center gap-2">
+            <span
+              className="inline-block w-1.5 h-1.5 rounded-full bg-secondary"
+              aria-hidden="true"
+            />
+            <span>
+              {doctorProfile.title[locale]} • {doctorProfile.cityShort[locale]}
+            </span>
+          </div>
+          <div className="hidden sm:flex items-center gap-3 text-on-surface-variant">
+            <span>{doctorProfile.specializationSummary[locale]}</span>
+          </div>
+        </div>
+      </section>
 
-            <h1 className="text-[2.25rem] sm:text-5xl lg:text-[3.35rem] font-semibold text-espresso leading-[1.26] tracking-tight">
-              {locale === "ar" ? (
-                <>
-                  عناية ببشرتك،
-                  <br />
-                  تبدأ بفهمها.
-                </>
-              ) : (
-                <>
-                  Thoughtful care
-                  <br />
-                  begins with your skin.
-                </>
-              )}
-            </h1>
-
-            <p className="text-sm sm:text-base text-ink-soft max-w-md leading-relaxed">
-              {locale === "ar"
-                ? "العناية بالبشرة والشعر وتجميل الجلد وتجديده"
-                : "Skin and hair aging care, cosmetic dermatology, and skin rejuvenation"}
-            </p>
-
-            {/* Primary Button + Underlined Secondary Link */}
-            <div className="pt-1 flex flex-wrap items-center gap-5 sm:gap-7">
-              <Link
-                href={`/${locale}/consultation`}
-                className="editorial-fade inline-flex items-center justify-center bg-espresso text-canvas hover:bg-[#2a1f19] px-7 py-3.5 text-sm font-medium rounded-[6px]"
-              >
-                {locale === "ar"
-                  ? "ابدئي طلب الاستشارة"
-                  : "Start Consultation"}
-              </Link>
-
-              <Link
-                href={`/${locale}/about`}
-                className="editorial-fade inline-flex items-center gap-2 text-sm font-medium text-espresso border-b border-espresso/50 pb-1 hover:text-taupe hover:border-taupe"
-              >
-                <span>
-                  {locale === "ar" ? "تعرّفي على الدكتورة" : "Meet the Doctor"}
+      {/* A. EDITORIAL HERO SECTION (Stitch Asymmetric 12-Col Dossier Hero) */}
+      <section className="w-full bg-surface py-12 md:py-16 lg:py-20">
+        <div className="mx-auto max-w-[1440px] px-5 md:px-12 lg:px-16">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+            {/* Copy & Typographic Column */}
+            <div className="lg:col-span-7 flex flex-col gap-7">
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center gap-2.5">
+                  <span className="editorial-kicker">
+                    {locale === "ar"
+                      ? "ملف تعريفي مهني · الرياض"
+                      : "Dermatology Profile · Riyadh"}
+                  </span>
+                  <span
+                    className="w-8 h-[1px] bg-secondary-dim"
+                    aria-hidden="true"
+                  />
+                </div>
+                <span className="text-xs sm:text-[13px] font-medium text-primary">
+                  {doctorProfile.name[locale]} — {doctorProfile.title[locale]}
+                  {locale === "ar" ? "، " : ", "}
+                  {doctorProfile.cityShort[locale]}
                 </span>
-                <span aria-hidden="true">{arrow}</span>
-              </Link>
+              </div>
+
+              <div className="flex flex-col gap-4">
+                <h1 className="font-editorial text-4xl sm:text-5xl lg:text-[56px] text-primary leading-[1.16] max-w-2xl">
+                  {locale === "ar" ? (
+                    <>
+                      عناية ببشرتك،
+                      <br />
+                      <span className="text-secondary">تبدأ بفهمها.</span>
+                    </>
+                  ) : (
+                    <>
+                      Thoughtful care
+                      <br />
+                      <span className="italic text-secondary">
+                        begins with understanding your skin.
+                      </span>
+                    </>
+                  )}
+                </h1>
+
+                <p className="text-base sm:text-[18px] text-on-surface-variant max-w-xl font-light leading-relaxed">
+                  {doctorProfile.conciseBio[locale]}
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-4 pt-1">
+                <Link
+                  href={`/${locale}/consultation`}
+                  className="editorial-fade inline-flex items-center justify-center gap-2.5 bg-primary-container text-on-primary text-xs font-medium px-7 h-12 rounded shadow-xs hover:bg-primary-hover"
+                >
+                  <span>{dict.hero.primaryCta}</span>
+                  <StitchIcon name={dirArrow} size={15} />
+                </Link>
+                <Link
+                  href={`/${locale}/about`}
+                  className="editorial-fade inline-flex items-center justify-center bg-surface-low border border-surface-high text-primary text-xs font-medium px-7 h-12 rounded hover:bg-surface-container"
+                >
+                  <span>{dict.hero.secondaryCta}</span>
+                </Link>
+              </div>
+
+              {/* 3 Micro Indicator Cards (Verified Qualitative Attributes Only) */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-3 max-w-xl">
+                {heroIndicators.map((ind) => (
+                  <div
+                    key={ind.kicker}
+                    className="bg-surface-low border border-surface-high/70 p-3.5 rounded"
+                  >
+                    <span className="text-[10px] font-semibold text-secondary block">
+                      {ind.kicker}
+                    </span>
+                    <span className="font-editorial text-[20px] text-primary block mt-0.5 leading-snug">
+                      {ind.title}
+                    </span>
+                    <p className="text-xs text-on-surface-variant mt-1 leading-relaxed">
+                      {ind.desc}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Subtle Editorial Divider + Sans Tagline */}
-            <div className="pt-4 space-y-3 max-w-xs">
-              <div className="h-[1px] w-24 bg-line-strong/80" aria-hidden="true" />
-              <p className="text-sm text-taupe font-normal">
-                {locale === "ar"
-                  ? "عناية هادئة تحترم طبيعة بشرتكِ."
-                  : "Skin, thoughtfully cared for."}
+            {/* Hero Architectural Visual Frame + Floating Dossier Label */}
+            <div className="lg:col-span-5 relative pb-4">
+              <div className="relative bg-surface-high p-4 shadow-xs max-w-md mx-auto lg:max-w-none">
+                <div className="relative w-full aspect-[4/5] overflow-hidden bg-surface-container">
+                  <Image
+                    src={doctorProfile.portraits.hero.src}
+                    alt={doctorProfile.portraits.hero.alt[locale]}
+                    width={doctorProfile.portraits.hero.width}
+                    height={doctorProfile.portraits.hero.height}
+                    priority
+                    sizes="(max-width: 1024px) 90vw, 42vw"
+                    className="w-full h-full object-cover object-top"
+                  />
+                  <div
+                    className="absolute inset-0 bg-gradient-to-t from-primary/25 via-transparent to-transparent pointer-events-none"
+                    aria-hidden="true"
+                  />
+                </div>
+
+                {/* Stitch Editorial Floating Card */}
+                <div className="absolute -bottom-4 start-6 end-6 sm:end-auto bg-surface-lowest py-3.5 px-5 shadow-md border border-surface-high sm:max-w-[300px]">
+                  <span className="text-[10px] font-semibold text-secondary block">
+                    {doctorProfile.title[locale]}
+                  </span>
+                  <p className="font-editorial text-[21px] text-primary mt-0.5 leading-snug">
+                    {doctorProfile.shortSignature[locale]}
+                  </p>
+                  <p className="text-xs text-on-surface-variant mt-1 leading-relaxed">
+                    {doctorProfile.specializationSummary[locale]}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* B. BRIEF BIO SECTION (Stitch 4/8 Split Dossier Band) */}
+      <section className="w-full bg-surface-low py-14 md:py-20 border-t border-b border-surface-high">
+        <div className="mx-auto max-w-[1440px] px-5 md:px-12 lg:px-16">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            <div className="lg:col-span-4 flex flex-col gap-3">
+              <span className="editorial-kicker">{dict.home.introKicker}</span>
+              <h2 className="font-editorial text-3xl sm:text-[38px] text-primary leading-[1.22]">
+                {dict.home.introHeading}
+              </h2>
+              <div className="w-12 h-[2px] bg-secondary my-1" aria-hidden="true" />
+              <p className="text-xs font-medium text-on-surface-variant">
+                {doctorProfile.city[locale]}
               </p>
+            </div>
+
+            <div className="lg:col-span-8">
+              <div className="bg-surface-lowest p-6 sm:p-9 shadow-xs border border-surface-high/80">
+                <p className="text-base sm:text-[18px] text-primary leading-relaxed font-light mb-6">
+                  {doctorProfile.extendedBio[locale][0]}
+                </p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm text-on-surface-variant">
+                  <div className="flex items-start gap-2.5">
+                    <StitchIcon
+                      name="check-circle"
+                      size={19}
+                      className="text-secondary shrink-0 mt-1"
+                    />
+                    <p className="leading-relaxed">
+                      {doctorProfile.extendedBio[locale][1]}
+                    </p>
+                  </div>
+                  <div className="flex items-start gap-2.5">
+                    <StitchIcon
+                      name="check-circle"
+                      size={19}
+                      className="text-secondary shrink-0 mt-1"
+                    />
+                    <p className="leading-relaxed">
+                      {doctorProfile.extendedBio[locale][2]}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-7 pt-5 border-t border-surface-high flex flex-wrap items-center justify-between gap-4">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-[11px] font-medium bg-tertiary-fixed text-primary px-2.5 py-1 rounded">
+                      {doctorProfile.title[locale]}
+                    </span>
+                    <span className="text-[11px] font-medium bg-tertiary-fixed text-primary px-2.5 py-1 rounded">
+                      {doctorProfile.cityShort[locale]}
+                    </span>
+                  </div>
+
+                  <Link
+                    href={`/${locale}/about`}
+                    className="editorial-fade text-xs font-medium text-secondary hover:text-primary inline-flex items-center gap-1.5"
+                  >
+                    <span>{dict.home.introLink}</span>
+                    <StitchIcon name={dirArrow} size={15} />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* C. AREAS OF CARE SECTION (Stitch 4-Column Dossier Grid) */}
+      <section className="w-full bg-surface py-16 md:py-22">
+        <div className="mx-auto max-w-[1440px] px-5 md:px-12 lg:px-16">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+            <div className="flex flex-col gap-2 max-w-xl">
+              <span className="editorial-kicker">{dict.home.areasKicker}</span>
+              <h2 className="font-editorial text-3xl sm:text-[40px] text-primary leading-[1.2]">
+                {dict.home.areasHeading}
+              </h2>
+            </div>
+            <div className="flex flex-col items-start md:items-end gap-2 max-w-sm">
+              <p className="text-sm text-on-surface-variant leading-relaxed">
+                {dict.home.areasSubheading}
+              </p>
+              <Link
+                href={`/${locale}/areas-of-care`}
+                className="text-xs font-medium text-primary underline underline-offset-4 hover:text-secondary"
+              >
+                {dict.home.areasViewAll}
+              </Link>
             </div>
           </div>
 
-          {/* Arched Expressive Skincare Frame + Inset Cream Swatch */}
-          <div className="lg:col-span-6 order-2">
-            <div className="relative mx-auto max-w-[390px] sm:max-w-[430px]">
-              <div className="overflow-hidden rounded-t-full bg-[#DDD1C4] aspect-[3/3.85]">
-                <Image
-                  src="/images/editorial/hero-skincare-editorial.jpg"
-                  alt={
-                    locale === "ar"
-                      ? "صورة تعبيرية تحريرية للعناية بالبشرة ونضارتها الطبيعية"
-                      : "Expressive skincare editorial portrait"
-                  }
-                  width={896}
-                  height={1200}
-                  priority
-                  sizes="(max-width: 1024px) 88vw, 430px"
-                  className="w-full h-full object-cover object-top"
-                />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {areasOfCare.map((area) => (
+              <div
+                key={area.id}
+                className="editorial-fade bg-surface-low border border-surface-high/80 p-7 flex flex-col justify-between hover:bg-surface-container shadow-xs group"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-6">
+                    <span
+                      dir="ltr"
+                      className="text-xs font-semibold text-secondary font-mono"
+                    >
+                      {area.number}
+                    </span>
+                    <StitchIcon
+                      name={areaIconMap[area.id] || "dermatology"}
+                      size={22}
+                      className="text-secondary"
+                    />
+                  </div>
+
+                  <span className="text-[11px] font-medium text-on-surface-variant block">
+                    {area.kicker[locale]}
+                  </span>
+
+                  <h3 className="font-editorial text-[23px] text-primary mt-1 mb-3 leading-snug">
+                    <Link
+                      href={`/${locale}/areas-of-care#${area.id}`}
+                      className="hover:text-secondary editorial-fade"
+                    >
+                      {area.title[locale]}
+                    </Link>
+                  </h3>
+
+                  <p className="text-sm text-on-surface-variant leading-relaxed">
+                    {area.shortSummary[locale]}
+                  </p>
+                </div>
+
+                <div className="pt-6 mt-6 border-t border-surface-high">
+                  <Link
+                    href={`/${locale}/consultation?area=${area.consultationTopicKey}`}
+                    className="w-full inline-flex items-center justify-between text-xs font-medium text-primary group-hover:text-secondary editorial-fade"
+                  >
+                    <span>{dict.home.areasInquireLink}</span>
+                    <StitchIcon name={dirArrow} size={15} />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* D. EDUCATIONAL CONSULTATION FRAMEWORK ACCENT (Stitch Analytical Visual Card — Non-Promissory) */}
+      <section className="w-full bg-surface-low py-14 md:py-18 border-t border-b border-surface-high">
+        <div className="mx-auto max-w-[1440px] px-5 md:px-12 lg:px-16">
+          <div className="bg-surface-lowest p-6 sm:p-10 lg:p-12 shadow-xs border border-surface-high/80">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+              <div className="lg:col-span-5 flex flex-col gap-3.5">
+                <span className="editorial-kicker">
+                  {locale === "ar"
+                    ? "نهج التقييم المباشر"
+                    : "In-Clinic Evaluation Approach"}
+                </span>
+                <h3 className="font-editorial text-2xl sm:text-[30px] text-primary leading-snug">
+                  {locale === "ar"
+                    ? "قراءة متوازنة لاحتياج البشرة والشعر قبل أي توصية"
+                    : "Balanced reading of skin and hair needs prior to care"}
+                </h3>
+                <p className="text-sm text-on-surface-variant leading-relaxed">
+                  {locale === "ar"
+                    ? "تنطلق الاستشارة الجلدية من فهم طبيعة البشرة والعوامل اليومية والبيئية المحيطة بها في الرياض، لمناقشة الخيارات المناسبة بوضوح وواقعية دون قوالب جاهزة."
+                    : "Consultations center on understanding individual skin characteristics alongside daily and environmental factors before discussing suitable care options."}
+                </p>
+                <div className="flex flex-col gap-2 pt-2 text-xs sm:text-[13px] text-primary">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-2 h-2 rounded-full bg-secondary shrink-0" />
+                    <span>
+                      {locale === "ar"
+                        ? "مراعاة توازن حاجز البشرة وراحتها اليومية"
+                        : "Supporting daily skin barrier balance and comfort"}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-2 h-2 rounded-full bg-secondary shrink-0" />
+                    <span>
+                      {locale === "ar"
+                        ? "تقييم التصبغات ومظهر المسام والمناطق الدقيقة"
+                        : "Addressing uneven tone, pore texture, and delicate zones"}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-2 h-2 rounded-full bg-secondary shrink-0" />
+                    <span>
+                      {locale === "ar"
+                        ? "العناية بتغيرات مرونة الجلد وحيوية الشعر مع العمر"
+                        : "Attending to age-related skin elasticity and hair vitality"}
+                    </span>
+                  </div>
+                </div>
               </div>
 
-              {/* Overlapping Inset Cream Swatch on Inner Bottom Edge */}
-              <div
-                className="absolute bottom-0 start-0 w-28 h-28 sm:w-36 sm:h-36 bg-canvas p-1.5 shadow-xs"
-                aria-hidden="true"
-              >
-                <div className="w-full h-full overflow-hidden bg-warm">
+              <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="overflow-hidden bg-surface-low border border-surface-high">
                   <Image
-                    src="/images/editorial/cream-swatch-macro.jpg"
-                    alt=""
-                    width={900}
-                    height={900}
-                    sizes="150px"
-                    className="w-full h-full object-cover"
+                    src="/images/editorial/cream-jar-shadow.jpg"
+                    alt={
+                      locale === "ar"
+                        ? "تكوين تحريري هادئ يعبر عن العناية بالبشرة"
+                        : "Calm editorial skincare still life"
+                    }
+                    width={896}
+                    height={1200}
+                    sizes="(max-width: 1024px) 88vw, 26vw"
+                    className="w-full h-56 sm:h-64 object-cover"
+                  />
+                </div>
+                <div className="overflow-hidden bg-surface-low border border-surface-high">
+                  <Image
+                    src={doctorProfile.editorialStillLife.linen.src}
+                    alt={doctorProfile.editorialStillLife.linen.alt[locale]}
+                    width={doctorProfile.editorialStillLife.linen.width}
+                    height={doctorProfile.editorialStillLife.linen.height}
+                    sizes="(max-width: 1024px) 88vw, 26vw"
+                    className="w-full h-56 sm:h-64 object-cover"
                   />
                 </div>
               </div>
@@ -266,380 +442,210 @@ export default async function HomePage({
         </div>
       </section>
 
-      {/* 2. FOUR-PILLAR ICON BAR */}
-      <section className="bg-warm border-t border-b border-hairline">
-        <div className="mx-auto max-w-6xl px-5 sm:px-8 lg:px-10 py-6 sm:py-7">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-6 md:gap-y-0">
-            {pillarStrip.map((pillar, idx) => (
-              <Link
-                key={pillar.href}
-                href={pillar.href}
-                className={`editorial-fade group flex flex-col items-center justify-center gap-2.5 px-4 text-center ${
-                  idx < pillarStrip.length - 1
-                    ? "md:border-e border-hairline"
-                    : ""
-                }`}
-              >
-                <span className="text-taupe group-hover:text-espresso editorial-fade">
-                  {pillar.icon}
+      {/* E. TOPICS FROM THE ACCOUNT (Stitch 3 Editorial Cards Grid) */}
+      <section className="w-full bg-surface py-16 md:py-22">
+        <div className="mx-auto max-w-[1440px] px-5 md:px-12 lg:px-16">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2.5">
+                <span className="editorial-kicker">
+                  {dict.home.topicsKicker}
                 </span>
-                <span className="text-xs sm:text-[13.5px] font-medium text-espresso group-hover:text-taupe editorial-fade">
-                  {pillar.label}
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 3. ABOUT THE DOCTOR — SPLIT EDITORIAL COLLAGE */}
-      <section className="mx-auto max-w-6xl px-5 sm:px-8 lg:px-10 py-18 sm:py-24 lg:py-28">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-          {/* Copy Column (Start Side in RTL / LTR) */}
-          <div className="lg:col-span-5 space-y-5 order-1">
-            <h2 className="text-3xl sm:text-4xl font-semibold text-espresso leading-[1.32]">
-              {locale === "ar" ? (
-                <>
-                  اعرفي الدكتورة
-                  <br />
-                  غادة العتيبي
-                </>
-              ) : (
-                <>
-                  Meet Dr. Ghada
-                  <br />
-                  Alotaibi
-                </>
-              )}
-            </h2>
-
-            <div className="space-y-2.5 text-sm sm:text-[15px] text-ink-soft leading-relaxed">
-              <p className="font-medium text-espresso">
-                {locale === "ar"
-                  ? "استشارية أمراض جلدية في الرياض"
-                  : "Consultant Dermatologist in Riyadh"}
-              </p>
-              <p>{doctorProfile.specializationSummary[locale]}</p>
-            </div>
-
-            <div className="pt-2">
-              <Link
-                href={`/${locale}/about`}
-                className="editorial-fade inline-flex items-center gap-2 text-sm font-medium text-espresso border-b border-espresso/50 pb-1 hover:text-taupe hover:border-taupe"
-              >
-                <span>
-                  {locale === "ar" ? "المزيد عن الدكتورة" : "Read Full Profile"}
-                </span>
-                <span aria-hidden="true">{arrow}</span>
-              </Link>
-            </div>
-          </div>
-
-          {/* Dual-Frame Editorial Still-Life Collage */}
-          <div className="lg:col-span-7 order-2">
-            <div className="grid grid-cols-12 gap-3 sm:gap-4 items-stretch">
-              <div className="col-span-7 overflow-hidden bg-warm">
-                <Image
-                  src="/images/editorial/cream-jar-shadow.jpg"
-                  alt={
-                    locale === "ar"
-                      ? "تكوين تحريري هادئ للعناية بالبشرة في ضوء طبيعي"
-                      : "Calm natural-light skincare editorial composition"
-                  }
-                  width={896}
-                  height={1200}
-                  sizes="(max-width: 1024px) 54vw, 360px"
-                  className="w-full h-full aspect-[3/3.22] object-cover"
+                <span
+                  className="w-10 h-[1px] bg-secondary-dim"
+                  aria-hidden="true"
                 />
               </div>
-              <div className="col-span-5 overflow-hidden bg-warm">
-                <Image
-                  src="/images/editorial/cream-swatch-macro.jpg"
-                  alt={
-                    locale === "ar"
-                      ? "تفصيل تحريري لملمس كريم العناية بالبشرة"
-                      : "Editorial skincare cream texture detail"
-                  }
-                  width={900}
-                  height={900}
-                  sizes="(max-width: 1024px) 38vw, 240px"
-                  className="w-full h-full aspect-[3/4.5] object-cover"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. CARE CENTERED AROUND YOUR NEEDS — 3 EDITORIAL CARDS */}
-      <section className="mx-auto max-w-6xl px-5 sm:px-8 lg:px-10 pb-20 sm:pb-26">
-        {/* Centered Heading Flanked by Hairlines */}
-        <div className="flex items-center justify-center gap-4 sm:gap-6 mb-10 sm:mb-12">
-          <span
-            className="h-[1px] w-12 sm:w-20 bg-line-strong"
-            aria-hidden="true"
-          />
-          <h2 className="text-2xl sm:text-3xl font-semibold text-espresso text-center">
-            {locale === "ar"
-              ? "عناية تبدأ باحتياجكِ"
-              : "Care Centered Around Your Needs"}
-          </h2>
-          <span
-            className="h-[1px] w-12 sm:w-20 bg-line-strong"
-            aria-hidden="true"
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {visualCareCards.map((card) => (
-            <Link
-              key={card.id}
-              href={card.href}
-              className="group block overflow-hidden bg-card-bar"
-            >
-              <div className="overflow-hidden aspect-square bg-warm">
-                <Image
-                  src={card.src}
-                  alt={card.alt}
-                  width={900}
-                  height={900}
-                  sizes="(max-width: 768px) 92vw, 350px"
-                  className="w-full h-full object-cover group-hover:scale-[1.02] editorial-fade"
-                />
-              </div>
-              <div className="bg-card-bar py-4 px-4 text-center">
-                <h3 className="text-sm sm:text-[15px] font-medium text-espresso group-hover:text-taupe editorial-fade">
-                  {card.label}
-                </h3>
-              </div>
-            </Link>
-          ))}
-        </div>
-
-        <div className="mt-8 text-center">
-          <Link
-            href={`/${locale}/areas-of-care`}
-            className="editorial-fade inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-ink-soft hover:text-espresso border-b border-line-strong pb-0.5"
-          >
-            <span>{dict.home.areasViewAll}</span>
-            <span aria-hidden="true">{arrow}</span>
-          </Link>
-        </div>
-      </section>
-
-      {/* 5. DEEP ESPRESSO INTERACTIVE CONSULTATION BAND */}
-      <section className="relative overflow-hidden bg-espresso text-canvas">
-        {/* Subtle Botanical Shadow Accent (Flat Editorial — No heavy gradients or glass) */}
-        <svg
-          viewBox="0 0 400 500"
-          fill="currentColor"
-          aria-hidden="true"
-          className="pointer-events-none absolute -bottom-10 end-0 w-72 sm:w-96 text-black/15"
-        >
-          <path d="M360 490C310 380 230 310 90 270c95-12 175 18 235 72-35-85-95-155-185-205 85 10 158 55 205 128-10-75-38-145-92-210 62 38 106 104 122 185 8-45 12-90 8-135 24 68 25 145-23 385Z" />
-        </svg>
-
-        <div className="relative mx-auto max-w-6xl px-5 sm:px-8 lg:px-10 py-16 sm:py-22 lg:py-24">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-            {/* Editorial Headline Side */}
-            <div className="lg:col-span-5 space-y-5">
-              <h2 className="text-3xl sm:text-5xl font-medium text-[#FAF7F2] leading-[1.25]">
-                {locale === "ar" ? (
-                  <>
-                    لكل بشرة
-                    <br />
-                    حكاية.
-                  </>
-                ) : (
-                  <>
-                    Every skin has
-                    <br />
-                    its story.
-                  </>
-                )}
+              <h2 className="font-editorial text-3xl sm:text-[40px] text-primary leading-[1.2]">
+                {dict.home.topicsHeading}
               </h2>
-
-              <div className="h-[1.5px] w-12 bg-taupe" aria-hidden="true" />
-
-              <p className="text-sm sm:text-base text-[#E2D8CC] leading-relaxed max-w-sm">
-                {locale === "ar"
-                  ? "ابدئي خطوتكِ الأولى باستشارة منظمة ومباشرة مع فريق التنسيق."
-                  : "Begin your first step with an attentive consultation."}
+              <p className="text-xs sm:text-sm text-on-surface-variant max-w-2xl leading-relaxed">
+                {dict.home.topicsDisclaimer}
               </p>
             </div>
 
-            {/* Interactive White Quick-Consultation Card */}
-            <div className="lg:col-span-7">
-              <HomeQuickConsultationCard locale={locale} dict={dict} />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 6. TOPICS FROM THE ACCOUNT — "مساحة للمعرفة والجمال" */}
-      <section className="mx-auto max-w-6xl px-5 sm:px-8 lg:px-10 py-20 sm:py-26">
-        <div className="text-center space-y-3 mb-10 sm:mb-12">
-          <div className="flex items-center justify-center gap-3">
-            <span className="h-[1px] w-10 bg-line-strong" aria-hidden="true" />
-            <p className="editorial-kicker">
-              {locale === "ar" ? "مواضيع من الحساب" : "From the Account"}
-            </p>
-            <span className="h-[1px] w-10 bg-line-strong" aria-hidden="true" />
-          </div>
-
-          <h2 className="text-2xl sm:text-4xl font-semibold text-espresso">
-            {locale === "ar"
-              ? "مساحة للمعرفة والجمال"
-              : "A Space for Skin Knowledge & Care"}
-          </h2>
-
-          <p className="text-xs sm:text-sm text-ink-muted max-w-xl mx-auto leading-relaxed">
-            {dict.home.topicsDisclaimer}
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {accountTopics.map((topic) => (
-            <Link
-              key={topic.id}
-              href={`/${locale}/consultation?topic=${topic.consultationTopicKey}`}
-              className="group block overflow-hidden bg-card-bar"
+            <a
+              href={doctorProfile.contact.instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="self-start md:self-auto inline-flex items-center gap-2 text-xs font-medium text-primary hover:text-secondary underline underline-offset-4"
             >
-              <div className="overflow-hidden aspect-[4/3] bg-warm">
-                <Image
-                  src={
-                    topicImageMap[topic.id] ||
-                    "/images/editorial/topic-pores-droplets.jpg"
-                  }
-                  alt={topic.title[locale]}
-                  width={900}
-                  height={672}
-                  sizes="(max-width: 768px) 92vw, 350px"
-                  className="w-full h-full object-cover group-hover:scale-[1.02] editorial-fade"
-                />
-              </div>
-              <div className="bg-card-bar py-4 px-4 text-center">
-                <h3 className="text-sm sm:text-[15px] font-medium text-espresso group-hover:text-taupe editorial-fade">
-                  {topic.title[locale]}
-                </h3>
-              </div>
-            </Link>
-          ))}
-        </div>
+              <span>{dict.home.topicsFollowLink}</span>
+              <span dir="ltr" className="text-secondary">
+                {doctorProfile.contact.instagramHandle}
+              </span>
+            </a>
+          </div>
 
-        {/* Approved Articles Preview (if any) + Centered Link Matching Reference */}
-        {publicArticles.length > 0 && (
-          <div className="mt-10 pt-8 border-t border-hairline grid grid-cols-1 md:grid-cols-2 gap-6">
-            {publicArticles.slice(0, 2).map((article) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {accountTopics.map((topic) => (
               <article
-                key={article.slug}
-                className="p-6 bg-warm rounded-[6px] space-y-2"
+                key={topic.id}
+                className="bg-surface-low border border-surface-high/80 flex flex-col shadow-xs group"
               >
-                <span className="text-xs text-taupe">
-                  {articleCategories[article.categoryKey][locale]}
-                </span>
-                <h3 className="text-lg font-semibold text-espresso">
-                  <Link
-                    href={`/${locale}/articles/${article.slug}`}
-                    className="hover:text-taupe"
-                  >
-                    {article.title}
-                  </Link>
-                </h3>
-                <p className="text-xs sm:text-sm text-ink-soft">
-                  {article.summary}
-                </p>
+                <div className="w-full aspect-[16/10] overflow-hidden bg-surface-container relative">
+                  <Image
+                    src={
+                      topicImageMap[topic.id] ||
+                      "/images/editorial/topic-pores-droplets.jpg"
+                    }
+                    alt={topic.title[locale]}
+                    width={900}
+                    height={672}
+                    sizes="(max-width: 768px) 92vw, 31vw"
+                    className="w-full h-full object-cover group-hover:scale-103 editorial-fade"
+                  />
+                  <div className="absolute top-3 start-3 bg-surface-lowest/95 px-2.5 py-1 text-[10px] font-semibold text-primary shadow-xs">
+                    {topic.tag[locale]}
+                  </div>
+                </div>
+
+                <div className="p-6 flex flex-col flex-1 justify-between gap-5">
+                  <div>
+                    <h3 className="font-editorial text-[22px] text-primary mb-2 leading-snug group-hover:text-secondary editorial-fade">
+                      {topic.title[locale]}
+                    </h3>
+                    <p className="text-[13.5px] text-on-surface-variant leading-relaxed">
+                      {topic.contextNote[locale]}
+                    </p>
+                  </div>
+
+                  <div className="pt-3 border-t border-surface-high flex items-center justify-between text-xs text-secondary">
+                    <span>
+                      {locale === "ar"
+                        ? "موضوع مطروح في الحساب"
+                        : "Account Theme"}
+                    </span>
+                    <Link
+                      href={`/${locale}/consultation?topic=${topic.consultationTopicKey}`}
+                      className="text-primary hover:text-secondary editorial-fade inline-flex items-center gap-1 font-medium"
+                    >
+                      <span>{dict.home.areasInquireLink}</span>
+                      <StitchIcon name={dirArrow} size={14} />
+                    </Link>
+                  </div>
+                </div>
               </article>
             ))}
           </div>
-        )}
 
-        <div className="mt-9 flex flex-col items-center gap-3 text-center">
-          <Link
-            href={`/${locale}/articles`}
-            className="editorial-fade inline-flex items-center gap-2 text-sm font-medium text-espresso border-b border-espresso/50 pb-1 hover:text-taupe hover:border-taupe"
-          >
-            <span>
-              {locale === "ar" ? "استكشفي المقالات" : "Explore Articles"}
-            </span>
-            <span aria-hidden="true">{arrow}</span>
-          </Link>
-
-          {publicArticles.length === 0 && (
-            <p className="text-xs text-ink-muted">
-              {dict.home.articlesEmptyNotice}
-            </p>
-          )}
-        </div>
-      </section>
-
-      {/* 7. BEFORE YOUR CONSULTATION — SPLIT FAQ & VERIFIED REVIEWS NOTE */}
-      <section className="bg-warm border-t border-hairline">
-        <div className="mx-auto max-w-6xl px-5 sm:px-8 lg:px-10 py-18 sm:py-22">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
-            {/* Heading Column */}
-            <div className="lg:col-span-4 space-y-4">
-              <div className="h-[1.5px] w-10 bg-taupe" aria-hidden="true" />
-              <h2 className="text-2xl sm:text-3xl font-semibold text-espresso">
-                {locale === "ar"
-                  ? "قبل استشارتكِ"
-                  : "Before Your Consultation"}
-              </h2>
-              <p className="text-xs sm:text-sm text-ink-soft leading-relaxed">
-                {dict.consultation.faq.lead}
-              </p>
-
-              {/* Discreet Verified Reviews Link Preserving Complete Sitemap Access */}
-              <div className="pt-2">
-                {publicReviews.length === 0 ? (
-                  <Link
-                    href={`/${locale}/reviews`}
-                    className="text-xs font-medium text-ink-muted hover:text-espresso underline underline-offset-4"
-                  >
-                    {dict.home.reviewsPageLink}
-                  </Link>
+          {/* F. APPROVED ARTICLES & VERIFIED REVIEWS STATUS STRIP */}
+          <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-surface-low border border-surface-high p-6 sm:p-7 flex flex-col justify-between gap-4">
+              <div className="space-y-2">
+                <span className="editorial-kicker">
+                  {dict.home.articlesKicker}
+                </span>
+                <h3 className="font-editorial text-2xl text-primary">
+                  {dict.home.articlesHeading}
+                </h3>
+                {publicArticles.length === 0 ? (
+                  <p className="text-sm text-on-surface-variant leading-relaxed">
+                    {dict.home.articlesEmptyNotice}
+                  </p>
                 ) : (
-                  <Link
-                    href={`/${locale}/reviews`}
-                    className="text-xs font-medium text-espresso underline underline-offset-4"
-                  >
-                    {dict.home.reviewsHeading}
-                  </Link>
+                  <ul className="space-y-2 pt-1">
+                    {publicArticles.slice(0, 2).map((art) => (
+                      <li key={art.slug} className="text-sm">
+                        <span className="text-xs text-secondary me-2">
+                          {articleCategories[art.categoryKey][locale]}:
+                        </span>
+                        <Link
+                          href={`/${locale}/articles/${art.slug}`}
+                          className="font-medium text-primary underline underline-offset-4"
+                        >
+                          {art.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
                 )}
+              </div>
+              <div>
+                <Link
+                  href={`/${locale}/articles`}
+                  className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:text-secondary underline underline-offset-4"
+                >
+                  <span>{dict.home.articlesArchiveLink}</span>
+                  <StitchIcon name={dirArrow} size={14} />
+                </Link>
               </div>
             </div>
 
-            {/* Clean Stacked Accordion Rows Matching Reference */}
-            <div className="lg:col-span-8 space-y-2.5">
-              {consultationFaqs.slice(0, 4).map((faq) => (
-                <details
-                  key={faq.id}
-                  className="group bg-canvas border border-hairline rounded-[6px] px-5 py-4"
-                >
-                  <summary className="cursor-pointer flex items-center justify-between gap-4 text-sm sm:text-[15px] font-medium text-espresso">
-                    <span>{faq.question[locale]}</span>
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.7"
-                      aria-hidden="true"
-                      className="text-taupe shrink-0 group-open:rotate-180 editorial-fade"
-                    >
-                      <path
-                        d="m6 9 6 6 6-6"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </summary>
-                  <p className="pt-3 mt-3 border-t border-hairline text-xs sm:text-sm text-ink-soft leading-relaxed">
-                    {faq.answer[locale]}
+            <div className="bg-surface-low border border-surface-high p-6 sm:p-7 flex flex-col justify-between gap-4">
+              <div className="space-y-2">
+                <span className="editorial-kicker">
+                  {dict.home.reviewsKicker}
+                </span>
+                <h3 className="font-editorial text-2xl text-primary">
+                  {dict.home.reviewsHeading}
+                </h3>
+                {publicReviews.length === 0 ? (
+                  <p className="text-sm text-on-surface-variant leading-relaxed">
+                    {dict.home.reviewsEmptyNotice}
                   </p>
-                </details>
-              ))}
+                ) : (
+                  <p className="text-sm text-primary">
+                    {publicReviews[0].excerpt}
+                  </p>
+                )}
+              </div>
+              <div>
+                <Link
+                  href={`/${locale}/reviews`}
+                  className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:text-secondary underline underline-offset-4"
+                >
+                  <span>{dict.home.reviewsPageLink}</span>
+                  <StitchIcon name={dirArrow} size={14} />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* G. CALM EDITORIAL CLOSING BANNER / DIRECT COORDINATION (Stitch Closing Card) */}
+      <section className="w-full bg-surface-highest py-16 md:py-22 px-5 md:px-12 lg:px-16">
+        <div className="max-w-4xl mx-auto bg-surface-lowest p-7 sm:p-11 shadow-md border border-surface-high">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+            <div className="flex flex-col gap-2.5 max-w-xl">
+              <span className="editorial-kicker">
+                {dict.home.closingKicker}
+              </span>
+              <h2 className="font-editorial text-2xl sm:text-[32px] text-primary leading-snug">
+                {dict.home.closingHeading}
+              </h2>
+              <p className="text-sm sm:text-[15px] text-on-surface-variant leading-relaxed">
+                {dict.home.closingBody}
+              </p>
+              <div className="flex items-center gap-2 text-outline text-xs pt-1">
+                <StitchIcon name="lock" size={15} className="text-secondary" />
+                <span>
+                  {locale === "ar"
+                    ? "لا تُخزّن مدخلات النموذج في قواعد بيانات أو تخزين محلي للمتصفح."
+                    : "Consultation form inputs are never stored in databases or browser localStorage."}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row md:flex-col gap-3 w-full md:w-auto shrink-0">
+              <a
+                href={doctorProfile.contact.whatsappDirectUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="editorial-fade inline-flex items-center justify-center gap-2 bg-primary-container text-on-primary text-xs font-medium px-6 h-12 rounded shadow-xs hover:bg-primary-hover"
+              >
+                <StitchIcon name="chat" size={16} />
+                <span>{dict.home.closingWhatsappCta}:</span>
+                <span dir="ltr">{doctorProfile.contact.whatsappDisplay}</span>
+              </a>
+
+              <Link
+                href={`/${locale}/consultation`}
+                className="editorial-fade inline-flex items-center justify-center bg-surface-container text-primary text-xs font-medium px-6 h-12 rounded hover:bg-surface-high"
+              >
+                <span>{dict.home.closingPrimaryCta}</span>
+              </Link>
             </div>
           </div>
         </div>

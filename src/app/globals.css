@@ -1,133 +1,153 @@
 @import "tailwindcss";
 
 :root {
-  --bg-canvas: #ffffff;
-  --bg-warm: #f8f5f0;
-  --bg-card-bar: #f4efe8;
-  --bg-sand: #eae0d5;
-  --accent-taupe: #9e8a75;
-  --ink-primary: #3b2c24;
-  --ink-secondary: #5e4e44;
-  --ink-muted: #857468;
-  --border-hairline: #ebe3d9;
-  --border-strong: #d8cbbd;
+  /* Stitch 'Atelier Clinique' Design System Palette */
+  --surface: #fbf9f6;
+  --surface-bright: #fbf9f6;
+  --surface-dim: #dbdad7;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f5f3f0;
+  --surface-container: #efeeeb;
+  --surface-container-high: #eae8e5;
+  --surface-container-highest: #e4e2df;
+
+  --on-surface: #1b1c1a;
+  --on-surface-variant: #4e4540;
+  --outline: #80756f;
+  --outline-variant: #d2c4bd;
+
+  --primary: #231811;
+  --on-primary: #ffffff;
+  --primary-container: #392c25;
+  --on-primary-container: #a69389;
+  --on-primary-fixed-variant: #52443c;
+
+  --secondary: #6d5c47;
+  --on-secondary: #ffffff;
+  --secondary-container: #f4dcc2;
+  --secondary-fixed-dim: #d9c3aa;
+  --on-secondary-fixed: #251909;
+  --on-secondary-fixed-variant: #544431;
+
+  --tertiary-fixed: #ece1d3;
+  --error: #ba1a1a;
+  --error-container: #ffdad6;
+  --on-error-container: #93000a;
 }
 
 @theme inline {
-  --color-canvas: var(--bg-canvas);
-  --color-warm: var(--bg-warm);
-  --color-card-bar: var(--bg-card-bar);
-  --color-sand: var(--bg-sand);
-  --color-taupe: var(--accent-taupe);
-  --color-espresso: var(--ink-primary);
-  --color-ink-soft: var(--ink-secondary);
-  --color-ink-muted: var(--ink-muted);
-  --color-hairline: var(--border-hairline);
-  --color-line-strong: var(--border-strong);
+  --color-surface: var(--surface);
+  --color-surface-bright: var(--surface-bright);
+  --color-surface-dim: var(--surface-dim);
+  --color-surface-lowest: var(--surface-container-lowest);
+  --color-surface-low: var(--surface-container-low);
+  --color-surface-container: var(--surface-container);
+  --color-surface-high: var(--surface-container-high);
+  --color-surface-highest: var(--surface-container-highest);
+
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-outline: var(--outline);
+  --color-outline-variant: var(--outline-variant);
+
+  --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-primary-container: var(--primary-container);
+  --color-primary-hover: var(--on-primary-fixed-variant);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-container: var(--secondary-container);
+  --color-secondary-dim: var(--secondary-fixed-dim);
+  --color-tertiary-fixed: var(--tertiary-fixed);
+
+  --color-error: var(--error);
+  --color-error-container: var(--error-container);
+  --color-on-error-container: var(--on-error-container);
+
+  /* Backward-compatible semantic aliases */
+  --color-canvas: var(--surface-container-lowest);
+  --color-warm: var(--surface-container-low);
+  --color-card-bar: var(--surface-container);
+  --color-sand: var(--tertiary-fixed);
+  --color-taupe: var(--secondary);
+  --color-espresso: var(--primary-container);
+  --color-ink-soft: var(--on-surface-variant);
+  --color-ink-muted: var(--outline);
+  --color-hairline: var(--surface-container-high);
+  --color-line-strong: var(--outline-variant);
 }
 
 html {
-  background-color: var(--bg-canvas);
-  color: var(--ink-primary);
+  background-color: var(--surface);
+  color: var(--on-surface);
   scroll-behavior: smooth;
   overflow-x: clip;
   -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background-color: var(--bg-canvas);
-  color: var(--ink-primary);
-  font-weight: 400;
+  background-color: var(--surface);
+  color: var(--on-surface);
   overflow-x: clip;
   text-rendering: optimizeLegibility;
 }
 
-/* Modern Luxury Sans-Serif Typography System (Zero Serif, Zero Traditional Naskh) */
+/* Stitch Typography Pairing:
+   Arabic: Noto Naskh Arabic (Display/Headings) + IBM Plex Sans Arabic (Body/UI)
+   English: EB Garamond (Display/Headings) + Inter (Body/UI)
+*/
 html[dir="rtl"] body {
-  font-family:
-    var(--font-ar-sans),
-    "Avenir Next",
-    "Avenir",
-    var(--font-en-sans),
-    system-ui,
-    -apple-system,
-    sans-serif;
-  line-height: 1.85;
+  font-family: var(--font-ar-sans), var(--font-en-sans), system-ui, sans-serif;
+  line-height: 1.8;
 }
 
 html[dir="ltr"] body {
-  font-family:
-    "Avenir Next",
-    "Avenir",
-    var(--font-en-sans),
-    system-ui,
-    -apple-system,
-    sans-serif;
-  line-height: 1.72;
+  font-family: var(--font-en-sans), system-ui, sans-serif;
+  line-height: 1.68;
 }
 
-/* Unified Editorial Sans Display Class — Medium (500) & SemiBold (600) only */
 html[dir="rtl"] .font-editorial {
-  font-family:
-    var(--font-ar-sans),
-    "Avenir Next",
-    "Avenir",
-    var(--font-en-sans),
-    system-ui,
-    sans-serif;
-  font-weight: 500;
+  font-family: var(--font-ar-serif), var(--font-en-serif), Georgia, serif;
   letter-spacing: 0;
 }
 
 html[dir="ltr"] .font-editorial {
-  font-family:
-    "Avenir Next",
-    "Avenir",
-    var(--font-en-sans),
-    system-ui,
-    sans-serif;
-  font-weight: 500;
-  letter-spacing: -0.02em;
+  font-family: var(--font-en-serif), Georgia, serif;
+  letter-spacing: -0.015em;
 }
 
-.font-en-brand {
-  font-family:
-    "Avenir Next",
-    "Avenir",
-    var(--font-en-sans),
-    system-ui,
-    sans-serif;
-  letter-spacing: 0.2em;
+.font-en-label {
+  font-family: var(--font-en-sans), system-ui, sans-serif;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
-/* Editorial Kickers */
+/* Editorial Kickers matching Stitch label-sm / label-md */
 .editorial-kicker {
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 500;
-  color: var(--accent-taupe);
+  color: var(--secondary);
 }
 
 html[dir="ltr"] .editorial-kicker {
   text-transform: uppercase;
-  letter-spacing: 0.16em;
-  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  font-size: 0.69rem;
 }
 
 html[dir="rtl"] .editorial-kicker {
-  letter-spacing: 0;
-  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  font-size: 0.76rem;
 }
 
-/* Accessible keyboard focus styling */
 :focus-visible {
-  outline: 2px solid var(--ink-primary);
-  outline-offset: 3px;
+  outline: 2px solid var(--primary-container);
+  outline-offset: 2px;
 }
 
 ::selection {
-  background-color: #eae0d5;
-  color: #3b2c24;
+  background-color: #ece1d3;
+  color: #231811;
 }
 
 .editorial-fade {
@@ -135,8 +155,9 @@ html[dir="rtl"] .editorial-kicker {
     color 200ms ease,
     background-color 200ms ease,
     border-color 200ms ease,
+    box-shadow 200ms ease,
     opacity 200ms ease,
-    transform 220ms ease;
+    transform 240ms ease;
 }
 
 @media (prefers-reduced-motion: reduce) {

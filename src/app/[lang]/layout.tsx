@@ -1,6 +1,11 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import { IBM_Plex_Sans_Arabic, Manrope } from "next/font/google";
+import {
+  EB_Garamond,
+  IBM_Plex_Sans_Arabic,
+  Inter,
+  Noto_Naskh_Arabic,
+} from "next/font/google";
 import { notFound } from "next/navigation";
 import "../globals.css";
 import {
@@ -14,16 +19,31 @@ import { buildDoctorJsonLd, buildPageMetadata } from "@/lib/seo";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 
+const notoNaskhArabic = Noto_Naskh_Arabic({
+  subsets: ["arabic"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-ar-serif",
+  display: "swap",
+});
+
 const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
   subsets: ["arabic"],
-  weight: ["400", "500", "600"],
+  weight: ["300", "400", "500", "600"],
   variable: "--font-ar-sans",
   display: "swap",
 });
 
-const manrope = Manrope({
+const ebGaramond = EB_Garamond({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
+  variable: "--font-en-serif",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
   variable: "--font-en-sans",
   display: "swap",
 });
@@ -71,16 +91,16 @@ export default async function LocalizedRootLayout({
     <html
       lang={locale}
       dir={dir}
-      className={`${ibmPlexSansArabic.variable} ${manrope.variable} antialiased`}
+      className={`${notoNaskhArabic.variable} ${ibmPlexSansArabic.variable} ${ebGaramond.variable} ${inter.variable} antialiased`}
     >
-      <body className="min-h-screen flex flex-col bg-canvas text-espresso">
+      <body className="min-h-screen flex flex-col bg-surface text-on-surface">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <Suspense
           fallback={
-            <header className="sticky top-0 z-40 h-20 bg-canvas border-b border-hairline" />
+            <header className="sticky top-0 z-50 h-20 bg-surface-bright border-b border-surface-high" />
           }
         >
           <SiteHeader locale={locale} dict={dict} />
