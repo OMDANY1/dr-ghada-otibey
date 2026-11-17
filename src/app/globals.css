@@ -1,26 +1,163 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-canvas: #ffffff;
+  --bg-warm: #f8f5f0;
+  --bg-card-bar: #f4efe8;
+  --bg-sand: #eae0d5;
+  --accent-taupe: #9e8a75;
+  --ink-primary: #3b2c24;
+  --ink-secondary: #5e4e44;
+  --ink-muted: #857468;
+  --border-hairline: #ebe3d9;
+  --border-strong: #d8cbbd;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-canvas: var(--bg-canvas);
+  --color-warm: var(--bg-warm);
+  --color-card-bar: var(--bg-card-bar);
+  --color-sand: var(--bg-sand);
+  --color-taupe: var(--accent-taupe);
+  --color-espresso: var(--ink-primary);
+  --color-ink-soft: var(--ink-secondary);
+  --color-ink-muted: var(--ink-muted);
+  --color-hairline: var(--border-hairline);
+  --color-line-strong: var(--border-strong);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background-color: var(--bg-canvas);
+  color: var(--ink-primary);
+  scroll-behavior: smooth;
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-canvas);
+  color: var(--ink-primary);
+  font-weight: 400;
+  overflow-x: clip;
+  text-rendering: optimizeLegibility;
+}
+
+/* Modern Luxury Sans-Serif Typography System (Zero Serif, Zero Traditional Naskh) */
+html[dir="rtl"] body {
+  font-family:
+    var(--font-ar-sans),
+    "Avenir Next",
+    "Avenir",
+    var(--font-en-sans),
+    system-ui,
+    -apple-system,
+    sans-serif;
+  line-height: 1.85;
+}
+
+html[dir="ltr"] body {
+  font-family:
+    "Avenir Next",
+    "Avenir",
+    var(--font-en-sans),
+    system-ui,
+    -apple-system,
+    sans-serif;
+  line-height: 1.72;
+}
+
+/* Unified Editorial Sans Display Class — Medium (500) & SemiBold (600) only */
+html[dir="rtl"] .font-editorial {
+  font-family:
+    var(--font-ar-sans),
+    "Avenir Next",
+    "Avenir",
+    var(--font-en-sans),
+    system-ui,
+    sans-serif;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+html[dir="ltr"] .font-editorial {
+  font-family:
+    "Avenir Next",
+    "Avenir",
+    var(--font-en-sans),
+    system-ui,
+    sans-serif;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.font-en-brand {
+  font-family:
+    "Avenir Next",
+    "Avenir",
+    var(--font-en-sans),
+    system-ui,
+    sans-serif;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* Editorial Kickers */
+.editorial-kicker {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--accent-taupe);
+}
+
+html[dir="ltr"] .editorial-kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.72rem;
+}
+
+html[dir="rtl"] .editorial-kicker {
+  letter-spacing: 0;
+  font-size: 0.82rem;
+}
+
+/* Accessible keyboard focus styling */
+:focus-visible {
+  outline: 2px solid var(--ink-primary);
+  outline-offset: 3px;
+}
+
+::selection {
+  background-color: #eae0d5;
+  color: #3b2c24;
+}
+
+.editorial-fade {
+  transition:
+    color 200ms ease,
+    background-color 200ms ease,
+    border-color 200ms ease,
+    opacity 200ms ease,
+    transform 220ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+details > summary {
+  list-style: none;
+}
+
+details > summary::-webkit-details-marker {
+  display: none;
 }
