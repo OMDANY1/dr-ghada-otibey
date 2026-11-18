@@ -117,9 +117,9 @@ export function SiteHeader({ locale, dict }: SiteHeaderProps) {
           {/* Editorial Serif Signature + Tiny Italic Latin Subtitle */}
           <Link
             href={`/${locale}`}
-            className="flex flex-col justify-center group min-w-0"
+            className="flex flex-col justify-center group shrink-0"
           >
-            <span className="font-editorial text-[20px] sm:text-[25px] text-primary leading-tight truncate">
+            <span className="font-editorial text-[19px] sm:text-[25px] text-primary leading-normal py-0.5 whitespace-nowrap">
               {doctorProfile.shortSignature[locale]}
             </span>
             <span className="mt-0.5">

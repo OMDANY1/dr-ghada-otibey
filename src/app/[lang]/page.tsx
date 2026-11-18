@@ -138,11 +138,7 @@ export default async function HomePage({
                   {locale === "ar" ? "عناية ببشرتك،" : "Thoughtful care"}
                 </LineReveal>
                 <LineReveal immediate delay={0.2}>
-                  <span
-                    className={`text-copper-gradient ${
-                      locale === "en" ? "italic" : ""
-                    }`}
-                  >
+                  <span className="text-copper-gradient">
                     {locale === "ar"
                       ? "تبدأ بفهمها."
                       : "begins with your skin."}
@@ -204,7 +200,7 @@ export default async function HomePage({
                       <span className="text-[11px] text-copper-700 font-normal">
                         {fact.kicker}
                       </span>
-                      <span className="font-editorial text-[22px] text-primary leading-snug">
+                      <span className="font-editorial text-[22px] text-primary leading-normal pb-0.5">
                         {fact.title}
                       </span>
                       <p className="text-xs text-on-surface-variant leading-relaxed">
@@ -285,7 +281,7 @@ export default async function HomePage({
                 ) : (
                   <>
                     Clinical dermatology shaped by clarity, discretion, and{" "}
-                    <span className="italic text-copper-gradient">
+                    <span className="text-copper-gradient">
                       individualized care.
                     </span>
                   </>
@@ -343,7 +339,7 @@ export default async function HomePage({
                 ) : (
                   <>
                     Four foundational pillars of{" "}
-                    <span className="italic text-copper-gradient">
+                    <span className="text-copper-gradient">
                       skin &amp; hair care
                     </span>
                   </>
@@ -447,7 +443,7 @@ export default async function HomePage({
                 ) : (
                   <>
                     Balanced reading of your skin prior to{" "}
-                    <span className="italic text-copper-gradient">
+                    <span className="text-copper-gradient">
                       any recommendation
                     </span>
                   </>
@@ -705,7 +701,7 @@ export default async function HomePage({
                 ) : (
                   <>
                     A quiet, structured way to{" "}
-                    <span className="italic text-copper-300">
+                    <span className="text-copper-300">
                       arrange your visit
                     </span>
                   </>

@@ -1,11 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import {
-  Cormorant_Garamond,
-  IBM_Plex_Sans_Arabic,
-  Inter,
-  Noto_Naskh_Arabic,
-} from "next/font/google";
+import localFont from "next/font/local";
 import { notFound } from "next/navigation";
 import "../globals.css";
 import {
@@ -20,32 +15,57 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SmoothScrollProvider } from "@/components/SmoothScrollProvider";
 
-const notoNaskhArabic = Noto_Naskh_Arabic({
-  subsets: ["arabic"],
-  weight: ["400", "500", "600"],
-  variable: "--font-ar-serif",
+const elgharibFont = localFont({
+  src: [
+    {
+      path: "../../fonts/Elgharib-Light.otf",
+      weight: "300",
+      style: "normal",
+    },
+    {
+      path: "../../fonts/Elgharib-Regular.otf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../fonts/Elgharib-Medium.otf",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../../fonts/Elgharib-Bold.otf",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "../../fonts/Elgharib-Black.otf",
+      weight: "900",
+      style: "normal",
+    },
+  ],
+  variable: "--font-heading",
   display: "swap",
 });
 
-const ibmPlexSansArabic = IBM_Plex_Sans_Arabic({
-  subsets: ["arabic"],
-  weight: ["300", "400", "500"],
-  variable: "--font-ar-sans",
-  display: "swap",
-});
-
-const cormorantGaramond = Cormorant_Garamond({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  style: ["normal", "italic"],
-  variable: "--font-latin-serif",
-  display: "swap",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["300", "400", "500"],
-  variable: "--font-en-sans",
+const stcFont = localFont({
+  src: [
+    {
+      path: "../../fonts/STC-Light.ttf",
+      weight: "300",
+      style: "normal",
+    },
+    {
+      path: "../../fonts/STC-Regular.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../fonts/STC-Bold.ttf",
+      weight: "700",
+      style: "normal",
+    },
+  ],
+  variable: "--font-body",
   display: "swap",
 });
 
@@ -92,7 +112,7 @@ export default async function LocalizedRootLayout({
     <html
       lang={locale}
       dir={dir}
-      className={`${notoNaskhArabic.variable} ${ibmPlexSansArabic.variable} ${cormorantGaramond.variable} ${inter.variable} antialiased`}
+      className={`${elgharibFont.variable} ${stcFont.variable} antialiased`}
     >
       <body className="min-h-screen flex flex-col bg-surface text-on-surface">
         <script

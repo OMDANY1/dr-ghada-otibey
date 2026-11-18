@@ -90,6 +90,9 @@
   --color-canvas: var(--surface-container-lowest);
   --color-warm: var(--surface-container-low);
   --color-espresso: var(--primary-container);
+
+  /* Typography tokens */
+  --font-sans: var(--font-body), system-ui, sans-serif;
 }
 
 html {
@@ -111,42 +114,68 @@ html.lenis body {
 body {
   background-color: var(--surface);
   color: var(--on-surface);
-  font-weight: 300;
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-weight: 400;
   overflow-x: clip;
   text-rendering: optimizeLegibility;
 }
 
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
 /* ==========================================================================
-   3. EDITORIAL TYPOGRAPHY SYSTEM (Arabic-First)
-   - Display Headings: Noto Naskh Arabic (RTL) / Cormorant Garamond (LTR)
-   - Body / UI: IBM Plex Sans Arabic (RTL, line-height 1.9) / Inter (LTR)
-   - Latin Captions: Cormorant Garamond Italic
+   3. EDITORIAL TYPOGRAPHY SYSTEM (Elgharib Headings + STC Body)
+   - Display & Section Headings: Elgharib (var(--font-heading))
+   - Body / UI / Captions: STC (var(--font-body))
    ========================================================================== */
 html[dir="rtl"] body {
-  font-family: var(--font-ar-sans), var(--font-en-sans), system-ui, sans-serif;
-  line-height: 1.9;
+  font-family: var(--font-body), system-ui, sans-serif;
+  line-height: 1.85;
 }
 
 html[dir="ltr"] body {
-  font-family: var(--font-en-sans), system-ui, sans-serif;
+  font-family: var(--font-body), system-ui, sans-serif;
   line-height: 1.75;
 }
 
-html[dir="rtl"] .font-editorial {
-  font-family: var(--font-ar-serif), var(--font-latin-serif), Georgia, serif;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-editorial {
+  font-family: var(--font-heading), system-ui, sans-serif;
   font-weight: 400;
+}
+
+html[dir="rtl"] h1,
+html[dir="rtl"] h2,
+html[dir="rtl"] h3,
+html[dir="rtl"] h4,
+html[dir="rtl"] h5,
+html[dir="rtl"] h6,
+html[dir="rtl"] .font-editorial {
   letter-spacing: 0;
 }
 
+html[dir="ltr"] h1,
+html[dir="ltr"] h2,
+html[dir="ltr"] h3,
+html[dir="ltr"] h4,
+html[dir="ltr"] h5,
+html[dir="ltr"] h6,
 html[dir="ltr"] .font-editorial {
-  font-family: var(--font-latin-serif), Georgia, serif;
-  font-weight: 400;
-  letter-spacing: -0.018em;
+  letter-spacing: -0.01em;
 }
 
 .font-latin-italic {
-  font-family: var(--font-latin-serif), Georgia, serif;
-  font-style: italic;
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-style: normal;
   font-weight: 400;
   letter-spacing: 0.02em;
 }
@@ -191,7 +220,7 @@ html[dir="rtl"] .editorial-kicker {
 
 /* Outlined Editorial Section Numerals 01-04 */
 .numeral-copper-outline {
-  font-family: var(--font-latin-serif), Georgia, serif;
+  font-family: var(--font-heading), system-ui, sans-serif;
   font-weight: 300;
   line-height: 1;
   color: transparent;

@@ -108,7 +108,7 @@ export function LineReveal({
   }
 
   return (
-    <span className="block overflow-hidden py-[0.12em] -my-[0.12em]">
+    <span className="block overflow-hidden py-[0.24em] -my-[0.2em]">
       <motion.span
         data-motion-reveal=""
         initial={{ y: "108%", opacity: 0 }}
