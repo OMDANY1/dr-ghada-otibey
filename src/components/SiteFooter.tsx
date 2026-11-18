@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { doctorProfile } from "@/content/doctor";
+import { BrandLogo } from "@/components/BrandLogo";
 
 interface SiteFooterProps {
   locale: Locale;
@@ -25,23 +26,24 @@ export function SiteFooter({ locale, dict }: SiteFooterProps) {
     <footer className="w-full bg-surface-low border-t border-copper-500/25 pt-18 pb-24 sm:py-20 text-on-surface">
       <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-14">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-0 pb-14">
-          {/* Column 1: Large Editorial Serif Name & Quiet Tagline */}
-          <div className="md:col-span-5 md:pe-10 md:border-e border-copper-500/20 flex flex-col gap-4">
-            <div>
-              <span className="font-editorial text-3xl sm:text-[38px] text-primary block leading-tight">
-                {doctorProfile.name[locale]}
+          {/* Column 1: Official Full Stacked SVG Brand Logo & Quiet Tagline */}
+          <div className="md:col-span-5 md:pe-10 md:border-e border-copper-500/20 flex flex-col items-start gap-5">
+            <Link
+              href={`/${locale}`}
+              aria-label={doctorProfile.name[locale]}
+              className="inline-block group"
+            >
+              <BrandLogo
+                variant="full"
+                className="w-36 sm:w-44 h-auto text-[#a58f77] transition-opacity duration-300 group-hover:opacity-85"
+              />
+            </Link>
+
+            {locale === "ar" && (
+              <span className="font-editorial text-2xl sm:text-[28px] text-primary block leading-normal">
+                {doctorProfile.name.ar}
               </span>
-              <span className="block mt-1.5">
-                <span
-                  dir="ltr"
-                  className="inline-block font-latin-italic text-sm text-copper-700"
-                >
-                  {locale === "ar"
-                    ? "Dr. Ghada Alotaibi, Consultant Dermatologist"
-                    : "Consultant Dermatologist · Riyadh"}
-                </span>
-              </span>
-            </div>
+            )}
 
             <p className="text-sm text-on-surface-variant max-w-[46ch] leading-[1.9]">
               {dict.footer.tagline}

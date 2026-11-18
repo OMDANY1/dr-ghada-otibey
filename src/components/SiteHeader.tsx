@@ -8,6 +8,7 @@ import { getOppositeLocale, type Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { doctorProfile } from "@/content/doctor";
 import { StitchIcon } from "@/components/StitchIcon";
+import { BrandLogo } from "@/components/BrandLogo";
 import { EASE_OUT_EXPO } from "@/lib/motion";
 
 interface SiteHeaderProps {
@@ -114,33 +115,30 @@ export function SiteHeader({ locale, dict }: SiteHeaderProps) {
             scrolled ? "h-16 sm:h-[70px]" : "h-20 sm:h-24"
           }`}
         >
-          {/* Editorial Serif Signature + Tiny Italic Latin Subtitle */}
+          {/* Official Brand Emblem + Editorial Signature */}
           <Link
             href={`/${locale}`}
-            className="flex flex-col justify-center group shrink-0"
+            className="flex items-center gap-2.5 sm:gap-3.5 group shrink-0"
           >
-            <span className="font-editorial text-[19px] sm:text-[25px] text-primary leading-normal py-0.5 whitespace-nowrap">
-              {doctorProfile.shortSignature[locale]}
-            </span>
-            <span className="mt-0.5">
-              <span
-                dir="ltr"
-                className="inline-block font-latin-italic text-[11px] sm:text-[12.5px] text-copper-700"
-              >
-                {locale === "ar" ? (
-                  <>
-                    Dr. Ghada Alotaibi
-                    <span className="hidden sm:inline">
-                      {" "}
-                      · Consultant Dermatologist
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    Consultant Dermatologist
-                    <span className="hidden sm:inline"> · Riyadh</span>
-                  </>
-                )}
+            <BrandLogo
+              variant="mark"
+              className={`text-[#a58f77] shrink-0 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04] ${
+                scrolled ? "w-8 h-5.5 sm:w-10 sm:h-7" : "w-9 h-6 sm:w-12 sm:h-8"
+              }`}
+            />
+            <span className="flex flex-col justify-center">
+              <span className="font-editorial text-[18px] sm:text-[24px] text-primary leading-normal py-0.5 whitespace-nowrap">
+                {doctorProfile.shortSignature[locale]}
+              </span>
+              <span className="hidden sm:block -mt-0.5">
+                <span
+                  dir="ltr"
+                  className="inline-block font-latin-italic text-[11px] sm:text-[12px] text-copper-700"
+                >
+                  {locale === "ar"
+                    ? "Dr. Ghada Alotaibi · Dermatologist"
+                    : "Consultant Dermatologist · Riyadh"}
+                </span>
               </span>
             </span>
           </Link>
@@ -233,6 +231,16 @@ export function SiteHeader({ locale, dict }: SiteHeaderProps) {
               className="xl:hidden border-t border-copper-500/25 bg-surface/98 backdrop-blur-lg shadow-lg"
             >
               <div className="mx-auto max-w-[1440px] px-5 sm:px-8 py-7 space-y-6">
+                <div className="pb-4 border-b border-copper-500/15 flex items-center justify-between">
+                  <BrandLogo
+                    variant="full"
+                    className="w-28 h-auto text-[#a58f77]"
+                  />
+                  <span className="text-xs text-copper-700">
+                    {doctorProfile.cityShort[locale]}
+                  </span>
+                </div>
+
                 <nav
                   aria-label={dict.nav.mobileNavTitle}
                   className="flex flex-col divide-y divide-copper-500/15"

@@ -8,6 +8,7 @@ import { areasOfCare } from "@/content/areas";
 import { articleCategories, getPublicArticles } from "@/content/articles";
 import { getPublicReviews } from "@/content/reviews";
 import { StitchIcon, type StitchIconName } from "@/components/StitchIcon";
+import { BrandLogo } from "@/components/BrandLogo";
 import { AreasIndexList } from "@/components/AreasIndexList";
 import {
   BotanicalCopperOrnament,
@@ -685,7 +686,11 @@ export default async function HomePage({
           <DrawCopperFrame />
 
           <div className="relative z-10 max-w-2xl mx-auto text-center space-y-7">
-            <Reveal className="space-y-3">
+            <Reveal className="space-y-4">
+              <BrandLogo
+                variant="mark"
+                className="w-14 h-auto mx-auto text-[#c9b49b]"
+              />
               <span className="inline-flex items-center gap-2.5 text-xs text-copper-300 tracking-wide">
                 <span className="w-6 h-px bg-copper-300/60" />
                 <span>{dict.home.closingKicker}</span>

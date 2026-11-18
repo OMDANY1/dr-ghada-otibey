@@ -8,6 +8,7 @@ import {
   useSpring,
   useTransform,
 } from "motion/react";
+import { BrandLogo } from "@/components/BrandLogo";
 
 /* ==========================================================================
    CENTRALIZED MOTION TOKENS
@@ -364,15 +365,9 @@ export function RotatingCircularBadge({
         </text>
       </svg>
 
-      {/* Stationary Center Copper Star Mark */}
-      <span className="absolute inset-0 flex items-center justify-center text-copper-500">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-          <path
-            d="M12 3c.7 4.8 4.2 8.3 9 9-4.8.7-8.3 4.2-9 9-.7-4.8-4.2-8.3-9-9 4.8-.7 8.3-4.2 9-9Z"
-            stroke="currentColor"
-            strokeWidth="1.2"
-          />
-        </svg>
+      {/* Stationary Center Official Brand Emblem */}
+      <span className="absolute inset-0 flex items-center justify-center">
+        <BrandLogo variant="mark" className="w-8 h-5.5 text-[#a58f77]" />
       </span>
     </div>
   );

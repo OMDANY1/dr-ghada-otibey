@@ -18,6 +18,7 @@ import {
   type RequestTypeKey,
 } from "@/content/consultation";
 import { StitchIcon, type StitchIconName } from "@/components/StitchIcon";
+import { BrandLogo } from "@/components/BrandLogo";
 import { EASE_OUT_EXPO } from "@/lib/motion";
 
 interface ConsultationWizardProps {
@@ -918,7 +919,11 @@ function ConsultationWizardInner({
 
         {/* Quiet Editorial Doctor & Privacy Aside (4 cols) */}
         <aside className="lg:col-span-4 lg:ps-8 lg:border-s border-copper-500/20 space-y-8">
-          <div className="space-y-4">
+          <div className="space-y-5">
+            <BrandLogo
+              variant="full"
+              className="w-28 h-auto text-[#a58f77]"
+            />
             <div className="flex items-center gap-4">
               <div className="w-16 h-20 rounded-t-full rounded-b-xl overflow-hidden border border-copper-500/40 bg-surface-low shrink-0">
                 <Image
