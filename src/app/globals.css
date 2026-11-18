@@ -1,7 +1,9 @@
 @import "tailwindcss";
 
 :root {
-  /* Stitch 'Atelier Clinique' Design System Palette */
+  /* ==========================================================================
+     1. PRESERVED EXISTING BRAND PALETTE (Unchanged Base Tokens)
+     ========================================================================== */
   --surface: #fbf9f6;
   --surface-bright: #fbf9f6;
   --surface-dim: #dbdad7;
@@ -33,6 +35,21 @@
   --error: #ba1a1a;
   --error-container: #ffdad6;
   --on-error-container: #93000a;
+
+  /* ==========================================================================
+     2. REFINED COPPER / BRUSHED BRONZE ACCENT SCALE (Precious Detail Only <8%)
+     - --copper-700 (#8A5226) achieves ~5.98:1 contrast on #FBF9F6 / #FFFFFF (WCAG AA)
+     - --copper-300 (#D9A27E) achieves ~7.9:1 contrast on #231811 dark surfaces (WCAG AAA)
+     - --copper-500 (#B87333) reserved for 1px hairlines, strokes, icons & large display accents
+     ========================================================================== */
+  --copper-200: #ebd0bc;
+  --copper-300: #d9a27e;
+  --copper-500: #b87333;
+  --copper-700: #8a5226;
+  --copper-gradient: linear-gradient(135deg, #e3b08a 0%, #b87333 55%, #8a5226 100%);
+
+  /* Motion Timing Tokens */
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @theme inline {
@@ -64,85 +81,293 @@
   --color-error-container: var(--error-container);
   --color-on-error-container: var(--on-error-container);
 
-  /* Backward-compatible semantic aliases */
+  --color-copper-200: var(--copper-200);
+  --color-copper-300: var(--copper-300);
+  --color-copper-500: var(--copper-500);
+  --color-copper-700: var(--copper-700);
+
+  /* Semantic aliases */
   --color-canvas: var(--surface-container-lowest);
   --color-warm: var(--surface-container-low);
-  --color-card-bar: var(--surface-container);
-  --color-sand: var(--tertiary-fixed);
-  --color-taupe: var(--secondary);
   --color-espresso: var(--primary-container);
-  --color-ink-soft: var(--on-surface-variant);
-  --color-ink-muted: var(--outline);
-  --color-hairline: var(--surface-container-high);
-  --color-line-strong: var(--outline-variant);
 }
 
 html {
   background-color: var(--surface);
   color: var(--on-surface);
-  scroll-behavior: smooth;
   overflow-x: clip;
   -webkit-text-size-adjust: 100%;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
 }
 
 body {
   background-color: var(--surface);
   color: var(--on-surface);
+  font-weight: 300;
   overflow-x: clip;
   text-rendering: optimizeLegibility;
 }
 
-/* Stitch Typography Pairing:
-   Arabic: Noto Naskh Arabic (Display/Headings) + IBM Plex Sans Arabic (Body/UI)
-   English: EB Garamond (Display/Headings) + Inter (Body/UI)
-*/
+/* ==========================================================================
+   3. EDITORIAL TYPOGRAPHY SYSTEM (Arabic-First)
+   - Display Headings: Noto Naskh Arabic (RTL) / Cormorant Garamond (LTR)
+   - Body / UI: IBM Plex Sans Arabic (RTL, line-height 1.9) / Inter (LTR)
+   - Latin Captions: Cormorant Garamond Italic
+   ========================================================================== */
 html[dir="rtl"] body {
   font-family: var(--font-ar-sans), var(--font-en-sans), system-ui, sans-serif;
-  line-height: 1.8;
+  line-height: 1.9;
 }
 
 html[dir="ltr"] body {
   font-family: var(--font-en-sans), system-ui, sans-serif;
-  line-height: 1.68;
+  line-height: 1.75;
 }
 
 html[dir="rtl"] .font-editorial {
-  font-family: var(--font-ar-serif), var(--font-en-serif), Georgia, serif;
+  font-family: var(--font-ar-serif), var(--font-latin-serif), Georgia, serif;
+  font-weight: 400;
   letter-spacing: 0;
 }
 
 html[dir="ltr"] .font-editorial {
-  font-family: var(--font-en-serif), Georgia, serif;
-  letter-spacing: -0.015em;
+  font-family: var(--font-latin-serif), Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.018em;
 }
 
-.font-en-label {
-  font-family: var(--font-en-sans), system-ui, sans-serif;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+.font-latin-italic {
+  font-family: var(--font-latin-serif), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.02em;
 }
 
-/* Editorial Kickers matching Stitch label-sm / label-md */
+/* Eyebrow Labels with Copper Hairline Prefix */
 .editorial-kicker {
-  font-size: 0.72rem;
-  font-weight: 500;
-  color: var(--secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--copper-700);
+}
+
+.editorial-kicker::before {
+  content: "";
+  display: inline-block;
+  width: 1.75rem;
+  height: 1px;
+  background: var(--copper-gradient);
+  flex-shrink: 0;
 }
 
 html[dir="ltr"] .editorial-kicker {
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.16em;
   font-size: 0.69rem;
 }
 
 html[dir="rtl"] .editorial-kicker {
   letter-spacing: 0.02em;
-  font-size: 0.76rem;
+  font-size: 0.78rem;
 }
 
-:focus-visible {
-  outline: 2px solid var(--primary-container);
-  outline-offset: 2px;
+/* Precious Copper Gradient Text Emphasis (One phrase per major heading) */
+.text-copper-gradient {
+  background-image: var(--copper-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Outlined Editorial Section Numerals 01-04 */
+.numeral-copper-outline {
+  font-family: var(--font-latin-serif), Georgia, serif;
+  font-weight: 300;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--copper-500);
+}
+
+/* Animated Copper Text Link Underline (Logical RTL/LTR aware) */
+.copper-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-block-end: 4px;
+}
+
+.copper-link::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  height: 1px;
+  background: var(--copper-gradient);
+  transform: scaleX(0.35);
+  transform-origin: right center;
+  transition: transform 450ms var(--ease-out-expo);
+}
+
+html[dir="ltr"] .copper-link::after {
+  transform-origin: left center;
+}
+
+.copper-link:hover::after,
+.copper-link:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* Primary Pill CTA with Subtle 6s Copper Border Shimmer */
+.btn-pill-primary {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  min-height: 50px;
+  padding-inline: 2rem;
+  border-radius: 9999px;
+  background-color: var(--primary-container);
+  color: var(--on-primary);
+  border: 1px solid rgba(217, 162, 126, 0.55);
+  overflow: hidden;
+  transition:
+    background-color 300ms var(--ease-out-expo),
+    border-color 300ms var(--ease-out-expo),
+    transform 300ms var(--ease-out-expo);
+}
+
+.btn-pill-primary:hover {
+  background-color: var(--primary);
+  border-color: var(--copper-300);
+}
+
+.btn-pill-primary::before {
+  content: "";
+  position: absolute;
+  inset-block: -20%;
+  inset-inline-start: -120%;
+  width: 65%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(227, 176, 138, 0.28),
+    transparent
+  );
+  transform: skewX(-20deg);
+  pointer-events: none;
+  animation: copper-sheen 6.5s var(--ease-out-expo) infinite;
+}
+
+@keyframes copper-sheen {
+  0%,
+  72% {
+    transform: translateX(0) skewX(-20deg);
+    opacity: 0;
+  }
+  78% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(460%) skewX(-20deg);
+    opacity: 0;
+  }
+}
+
+/* Secondary Outlined Pill CTA */
+.btn-pill-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 50px;
+  padding-inline: 1.85rem;
+  border-radius: 9999px;
+  background-color: transparent;
+  color: var(--primary);
+  border: 1px solid rgba(184, 115, 51, 0.45);
+  transition:
+    background-color 300ms var(--ease-out-expo),
+    border-color 300ms var(--ease-out-expo),
+    color 300ms var(--ease-out-expo);
+}
+
+.btn-pill-secondary:hover {
+  background-color: var(--surface-container-low);
+  border-color: var(--copper-500);
+}
+
+/* Soft Copper Ambient Hover Glow for Dark Section WhatsApp Pill (Compositor-only opacity) */
+.btn-pill-copper-glow {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  min-height: 52px;
+  padding-inline: 2.1rem;
+  border-radius: 9999px;
+  background-color: var(--surface-bright);
+  color: var(--primary);
+  border: 1px solid var(--copper-300);
+  isolation: isolate;
+  transition:
+    transform 300ms var(--ease-out-expo),
+    border-color 300ms var(--ease-out-expo);
+}
+
+.btn-pill-copper-glow::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  box-shadow: 0 0 28px rgba(217, 162, 126, 0.36);
+  opacity: 0;
+  transition: opacity 350ms var(--ease-out-expo);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.btn-pill-copper-glow:hover::after {
+  opacity: 1;
+}
+
+/* Slow 24s Rotating Circular Seal */
+@keyframes seal-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-seal-spin {
+  animation: seal-spin 24s linear infinite;
+}
+
+/* Accessible Copper Focus Ring (inside @layer base so field-specific utilities can override) */
+@layer base {
+  :focus-visible {
+    outline: 1.5px solid var(--copper-500);
+    outline-offset: 3px;
+  }
+}
+
+.editorial-borderless-field:focus,
+.editorial-borderless-field:focus-visible {
+  outline: none !important;
 }
 
 ::selection {
@@ -150,19 +375,28 @@ html[dir="rtl"] .editorial-kicker {
   color: #231811;
 }
 
-.editorial-fade {
-  transition:
-    color 200ms ease,
-    background-color 200ms ease,
-    border-color 200ms ease,
-    box-shadow 200ms ease,
-    opacity 200ms ease,
-    transform 240ms ease;
+/* SSR & No-JS Fallback + Reduced Motion Tiered Degradation */
+@media (scripting: none) {
+  [data-motion-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
-    scroll-behavior: auto;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-seal-spin,
+  .btn-pill-primary::before {
+    animation: none !important;
+  }
+
+  [data-motion-reveal] {
+    transform: none !important;
+    clip-path: none !important;
   }
 
   *,
@@ -170,7 +404,7 @@ html[dir="rtl"] .editorial-kicker {
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    transition-duration: 150ms !important;
     scroll-behavior: auto !important;
   }
 }

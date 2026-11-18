@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { isValidLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { buildPageMetadata } from "@/lib/seo";
-import { StitchIcon } from "@/components/StitchIcon";
+import { LineReveal, Reveal } from "@/lib/motion";
 
 export async function generateMetadata({
   params,
@@ -35,43 +35,40 @@ export default async function PrivacyPolicyPage({
 
   return (
     <div className="flex flex-col w-full bg-surface">
-      <div className="w-full bg-surface-low border-b border-surface-high py-2.5">
-        <div className="mx-auto max-w-[1440px] px-5 md:px-12 lg:px-16 flex items-center gap-2 text-xs font-medium text-secondary">
-          <StitchIcon name="shield" size={15} />
-          <span>{dict.privacy.kicker}</span>
-        </div>
-      </div>
-
-      <section className="mx-auto max-w-4xl w-full px-5 md:px-12 pt-12 pb-8">
-        <div className="space-y-3">
-          <span className="editorial-kicker">{dict.privacy.kicker}</span>
-          <h1 className="font-editorial text-3xl sm:text-5xl text-primary">
+      <section className="mx-auto max-w-4xl w-full px-5 sm:px-8 pt-10 pb-12 sm:pt-14 sm:pb-16 border-b border-copper-500/20 space-y-4">
+        <span className="editorial-kicker">{dict.privacy.kicker}</span>
+        <h1 className="font-editorial text-[clamp(2.4rem,4.8vw,4.5rem)] text-primary leading-[1.15]">
+          <LineReveal immediate delay={0.05}>
             {dict.privacy.heading}
-          </h1>
-          <p className="text-base sm:text-[17px] text-on-surface-variant font-light leading-relaxed">
+          </LineReveal>
+        </h1>
+        <Reveal immediate delay={0.18}>
+          <p className="text-base sm:text-[18px] text-on-surface-variant font-light leading-[1.9] max-w-[62ch]">
             {dict.privacy.lead}
           </p>
-        </div>
+        </Reveal>
       </section>
 
-      <section className="mx-auto max-w-4xl w-full px-5 md:px-12 pb-20">
-        <div className="bg-surface-lowest border border-surface-high rounded-xl p-6 sm:p-10 shadow-xs divide-y divide-surface-high">
-          {dict.privacy.sections.map((section, idx) => (
-            <div key={idx} className="py-7 first:pt-0 last:pb-0 space-y-3">
-              <h2 className="font-editorial text-2xl text-primary">
-                {section.title}
-              </h2>
-              {section.paragraphs.map((p, pIdx) => (
-                <p
-                  key={pIdx}
-                  className="text-sm sm:text-base text-on-surface-variant leading-relaxed"
-                >
-                  {p}
-                </p>
-              ))}
-            </div>
-          ))}
-        </div>
+      <section className="mx-auto max-w-4xl w-full px-5 sm:px-8 py-14 sm:py-22 divide-y divide-copper-500/20">
+        {dict.privacy.sections.map((section, idx) => (
+          <Reveal
+            key={idx}
+            delay={idx * 0.06}
+            className="py-8 first:pt-0 last:pb-0 space-y-3.5"
+          >
+            <h2 className="font-editorial text-2xl sm:text-3xl text-primary">
+              {section.title}
+            </h2>
+            {section.paragraphs.map((p, pIdx) => (
+              <p
+                key={pIdx}
+                className="text-sm sm:text-base text-on-surface-variant leading-[1.95] max-w-[65ch]"
+              >
+                {p}
+              </p>
+            ))}
+          </Reveal>
+        ))}
       </section>
     </div>
   );

@@ -7,6 +7,13 @@ import { buildPageMetadata } from "@/lib/seo";
 import { getPublicReviews } from "@/content/reviews";
 import { doctorProfile } from "@/content/doctor";
 import { StitchIcon, type StitchIconName } from "@/components/StitchIcon";
+import {
+  DelicateEditorialEmblem,
+  DrawCopperFrame,
+  LineReveal,
+  Magnetic,
+  Reveal,
+} from "@/lib/motion";
 
 export async function generateMetadata({
   params,
@@ -39,129 +46,56 @@ export default async function ReviewsPage({
   const dirArrow: StitchIconName =
     locale === "ar" ? "arrow-back" : "arrow-forward";
 
-  const ethicalBento =
-    locale === "ar"
-      ? [
-          {
-            kicker: "المبدأ الأول · الخصوصية",
-            title: "حماية خصوصية المراجعات",
-            body: dict.reviews.policyPoints[0],
-            icon: "lock" as StitchIconName,
-          },
-          {
-            kicker: "المبدأ الثاني · المصداقية",
-            title: "عدم عرض تقييمات غير موثقة",
-            body: dict.reviews.policyPoints[1],
-            icon: "verified" as StitchIconName,
-          },
-          {
-            kicker: "المبدأ الثالث · السرية الطبية",
-            title: "صون الهوية والتفاصيل الصحية",
-            body: dict.reviews.policyPoints[2],
-            icon: "shield" as StitchIconName,
-          },
-        ]
-      : [
-          {
-            kicker: "Pillar 01 · Discretion",
-            title: "Safeguarding Patient Privacy",
-            body: dict.reviews.policyPoints[0],
-            icon: "lock" as StitchIconName,
-          },
-          {
-            kicker: "Pillar 02 · Integrity",
-            title: "Zero Unverified Ratings",
-            body: dict.reviews.policyPoints[1],
-            icon: "verified" as StitchIconName,
-          },
-          {
-            kicker: "Pillar 03 · Confidentiality",
-            title: "Clinical Record Protection",
-            body: dict.reviews.policyPoints[2],
-            icon: "shield" as StitchIconName,
-          },
-        ];
-
   return (
     <div className="flex flex-col w-full bg-surface">
-      {/* Top Ethics Notice Ribbon (Stitch Screen 4) */}
-      <div className="w-full bg-surface-high py-2.5 px-5 md:px-12 text-center">
-        <p className="text-xs font-medium text-on-surface-variant inline-flex items-center justify-center gap-2">
-          <StitchIcon name="verified" size={15} className="text-secondary" />
-          <span>
-            {locale === "ar"
-              ? "معايير الخصوصية والشفافية المهنية في نشر التجارب — الرياض"
-              : "Privacy & Verification Standards for Published Testimonials — Riyadh"}
-          </span>
-        </p>
-      </div>
-
-      {/* Editorial Hero Section (Stitch Screen 4 Split Header + Policy Card) */}
-      <section className="mx-auto max-w-[1440px] w-full px-5 md:px-12 lg:px-16 pt-12 pb-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-end">
-          <div className="lg:col-span-7 flex flex-col gap-4">
-            <div className="flex items-center gap-2.5">
-              <span className="editorial-kicker bg-surface-container px-3 py-1 rounded">
-                {dict.reviews.kicker}
-              </span>
-              <span className="w-8 h-px bg-outline-variant" />
-            </div>
-
-            <h1 className="font-editorial text-3xl sm:text-5xl text-primary leading-tight">
+      {/* Editorial Masthead */}
+      <section className="mx-auto max-w-[1440px] w-full px-5 sm:px-8 lg:px-14 pt-10 pb-14 sm:pt-14 sm:pb-20 border-b border-copper-500/20">
+        <div className="max-w-3xl space-y-4">
+          <span className="editorial-kicker">{dict.reviews.kicker}</span>
+          <h1 className="font-editorial text-[clamp(2.5rem,5vw,4.8rem)] text-primary leading-[1.15]">
+            <LineReveal immediate delay={0.05}>
               {dict.reviews.heading}
-            </h1>
-
-            <p className="text-base sm:text-[17px] text-on-surface-variant font-light max-w-2xl leading-relaxed">
+            </LineReveal>
+          </h1>
+          <Reveal immediate delay={0.18}>
+            <p className="text-base sm:text-[18px] text-on-surface-variant font-light leading-[1.9] max-w-[62ch]">
               {dict.reviews.lead}
             </p>
-          </div>
-
-          <div className="lg:col-span-5">
-            <div className="bg-surface-low border border-surface-high p-6 sm:p-7 rounded-lg shadow-xs space-y-3">
-              <div className="flex items-center gap-2.5 text-primary">
-                <StitchIcon name="shield" size={20} className="text-secondary" />
-                <span className="font-editorial text-xl">
-                  {dict.reviews.emptyTitle}
-                </span>
-              </div>
-              <p className="text-sm text-on-surface-variant leading-relaxed">
-                {dict.reviews.emptyBody}
-              </p>
-            </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
-      {/* Verified Testimonials (When Available) + Ethical Bento Grid */}
-      <section className="mx-auto max-w-[1440px] w-full px-5 md:px-12 lg:px-16 py-10 md:py-14 space-y-12">
-        {publicReviews.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Intentional Centered Empty State + Hairline Ethical Index */}
+      <section className="mx-auto max-w-[1440px] w-full px-5 sm:px-8 lg:px-14 py-20 sm:py-28 space-y-20">
+        {publicReviews.length === 0 ? (
+          <Reveal className="max-w-2xl mx-auto text-center space-y-5">
+            <DelicateEditorialEmblem variant="seal" />
+            <span className="editorial-kicker justify-center">
+              {dict.reviews.kicker}
+            </span>
+            <h2 className="font-editorial text-3xl sm:text-4xl text-primary leading-snug">
+              {dict.reviews.emptyTitle}
+            </h2>
+            <p className="text-sm sm:text-base text-on-surface-variant leading-[1.95] max-w-[56ch] mx-auto">
+              {dict.reviews.emptyBody}
+            </p>
+          </Reveal>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             {publicReviews.map((review) => (
               <blockquote
                 key={review.id}
-                className="p-7 bg-surface-lowest border border-surface-high rounded-lg shadow-xs flex flex-col justify-between gap-5"
+                className="py-8 border-t border-b border-copper-500/25 flex flex-col justify-between gap-5"
               >
-                <p className="font-editorial text-xl text-primary leading-relaxed">
+                <p className="font-editorial text-2xl text-primary leading-relaxed">
                   {review.excerpt}
                 </p>
-                <footer className="pt-4 border-t border-surface-high flex flex-wrap items-center justify-between gap-2 text-xs text-outline">
-                  <span className="font-medium text-primary">
+                <footer className="flex flex-wrap items-center justify-between gap-2 text-xs text-outline">
+                  <span className="text-primary font-medium">
                     {review.authorDisplay}
                   </span>
                   <span>
-                    {dict.reviews.sourcePrefix}{" "}
-                    {review.sourceUrl ? (
-                      <a
-                        href={review.sourceUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline underline-offset-4 text-primary"
-                      >
-                        {review.sourceLabel}
-                      </a>
-                    ) : (
-                      review.sourceLabel
-                    )}
+                    {dict.reviews.sourcePrefix} {review.sourceLabel}
                   </span>
                 </footer>
               </blockquote>
@@ -169,68 +103,66 @@ export default async function ReviewsPage({
           </div>
         )}
 
-        {/* Stitch 3-Column Values Bento */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-          {ethicalBento.map((pillar) => (
-            <div
-              key={pillar.title}
-              className="md:col-span-4 bg-surface-lowest border border-surface-high p-7 rounded-lg shadow-xs flex flex-col justify-between group hover:bg-surface-low editorial-fade"
+        {/* Hairline-Separated Publication Standards (01-03) */}
+        <div className="pt-12 border-t border-copper-500/25 grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-0">
+          {dict.reviews.policyPoints.map((point, index) => (
+            <Reveal
+              key={index}
+              delay={index * 0.1}
+              className={`space-y-3 ${index > 0 ? "md:ps-10" : ""} ${
+                index < dict.reviews.policyPoints.length - 1
+                  ? "md:pe-10 md:border-e border-copper-500/20"
+                  : ""
+              }`}
             >
-              <div>
-                <div className="w-11 h-11 rounded bg-surface-container flex items-center justify-center text-primary mb-5 group-hover:bg-primary-container group-hover:text-on-primary editorial-fade">
-                  <StitchIcon name={pillar.icon} size={20} />
-                </div>
-                <span className="editorial-kicker block mb-1.5">
-                  {pillar.kicker}
-                </span>
-                <h2 className="font-editorial text-[22px] text-primary mb-2.5">
-                  {pillar.title}
-                </h2>
-                <p className="text-sm text-on-surface-variant leading-relaxed">
-                  {pillar.body}
-                </p>
-              </div>
-            </div>
+              <span
+                dir="ltr"
+                className="numeral-copper-outline text-4xl block select-none"
+              >
+                0{index + 1}
+              </span>
+              <p className="text-sm sm:text-base text-primary leading-[1.9]">
+                {point}
+              </p>
+            </Reveal>
           ))}
         </div>
       </section>
 
-      {/* Dark Primary Closing Consultation Banner (Stitch Screen 4 Bottom) */}
-      <section className="mx-auto max-w-[1440px] w-full px-5 md:px-12 lg:px-16 pb-20 pt-4">
-        <div className="bg-primary-container text-on-primary rounded-lg p-8 sm:p-12 shadow-md">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-8 space-y-2.5">
-              <span
-                dir="ltr"
-                className="inline-block font-en-label text-[10px] text-secondary-dim"
-              >
-                Consultation Coordination · Riyadh
-              </span>
-              <h2 className="font-editorial text-2xl sm:text-4xl text-on-primary leading-snug">
-                {dict.home.closingHeading}
-              </h2>
-              <p className="text-sm text-on-primary/80 max-w-xl leading-relaxed">
-                {dict.home.closingBody}
-              </p>
-            </div>
-
-            <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3">
+      {/* Dark Espresso Closing Section with Draw-On Copper Frame */}
+      <section className="w-full pb-20 sm:pb-28 px-4 sm:px-8 lg:px-14">
+        <div className="relative mx-auto max-w-[1360px] rounded-[30px] bg-primary text-on-primary px-6 py-16 sm:px-14 sm:py-22 overflow-hidden text-center">
+          <DrawCopperFrame />
+          <div className="relative z-10 max-w-xl mx-auto space-y-6">
+            <h2 className="font-editorial text-3xl sm:text-5xl text-on-primary leading-tight">
+              {dict.home.closingHeading}
+            </h2>
+            <p className="text-sm sm:text-base text-on-primary/80 leading-[1.9] font-light">
+              {dict.home.closingBody}
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+              <Magnetic strength={6}>
+                <a
+                  href={doctorProfile.contact.whatsappDirectUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-pill-copper-glow w-full sm:w-auto text-xs sm:text-sm font-medium"
+                >
+                  <StitchIcon
+                    name="chat"
+                    size={16}
+                    className="text-copper-700"
+                  />
+                  <span dir="ltr">{doctorProfile.contact.whatsappDisplay}</span>
+                </a>
+              </Magnetic>
               <Link
                 href={`/${locale}/consultation`}
-                className="editorial-fade inline-flex items-center justify-center gap-2 bg-surface-lowest text-primary text-xs font-semibold px-6 h-12 rounded hover:bg-surface-low"
+                className="inline-flex items-center justify-center gap-2 min-h-[52px] px-8 rounded-full border border-copper-300/45 text-on-primary hover:border-copper-300 text-xs sm:text-sm w-full sm:w-auto"
               >
                 <span>{dict.reviews.inquireCta}</span>
                 <StitchIcon name={dirArrow} size={15} />
               </Link>
-              <a
-                href={doctorProfile.contact.whatsappDirectUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="editorial-fade inline-flex items-center justify-center gap-2 border border-on-primary/30 text-on-primary text-xs font-medium px-6 h-12 rounded hover:bg-on-primary/10"
-              >
-                <StitchIcon name="chat" size={15} />
-                <span dir="ltr">{doctorProfile.contact.whatsappDisplay}</span>
-              </a>
             </div>
           </div>
         </div>

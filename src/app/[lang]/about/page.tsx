@@ -7,6 +7,16 @@ import { getDictionary } from "@/i18n/dictionaries";
 import { buildPageMetadata } from "@/lib/seo";
 import { doctorProfile, type CredentialItem } from "@/content/doctor";
 import { StitchIcon, type StitchIconName } from "@/components/StitchIcon";
+import {
+  BotanicalCopperOrnament,
+  CopperLeafDot,
+  DrawLine,
+  LineReveal,
+  Magnetic,
+  MaskReveal,
+  ParallaxBox,
+  Reveal,
+} from "@/lib/motion";
 
 export async function generateMetadata({
   params,
@@ -37,16 +47,18 @@ function VerifiedCredentialSection({
   if (!items || items.length === 0) return null;
 
   return (
-    <div className="py-10 border-t border-surface-high grid grid-cols-1 md:grid-cols-12 gap-6">
+    <div className="py-12 border-t border-copper-500/20 grid grid-cols-1 md:grid-cols-12 gap-6">
       <div className="md:col-span-4">
-        <h2 className="font-editorial text-2xl text-primary">{heading}</h2>
+        <h2 className="font-editorial text-2xl sm:text-3xl text-primary">
+          {heading}
+        </h2>
       </div>
       <div className="md:col-span-8">
-        <ul className="divide-y divide-surface-high">
+        <ul className="divide-y divide-copper-500/15">
           {items.map((item) => (
             <li
               key={item.id}
-              className="py-3.5 first:pt-0 last:pb-0 flex flex-col sm:flex-row sm:items-baseline justify-between gap-2"
+              className="py-4 first:pt-0 last:pb-0 flex flex-col sm:flex-row sm:items-baseline justify-between gap-2"
             >
               <div>
                 <p className="text-sm font-medium text-primary">
@@ -59,7 +71,7 @@ function VerifiedCredentialSection({
                 )}
               </div>
               {item.year && (
-                <span className="text-xs text-secondary" dir="ltr">
+                <span className="font-latin-italic text-sm text-copper-700" dir="ltr">
                   {item.year}
                 </span>
               )}
@@ -90,353 +102,194 @@ export default async function AboutDoctorPage({
     doctorProfile.experience.length > 0 ||
     doctorProfile.memberships.length > 0;
 
-  const practicePillars =
-    locale === "ar"
-      ? [
-          {
-            num: "01",
-            title: "الاستماع المتأني والفحص السريري",
-            body: "تنطلق كل استشارة من فهم شكوى المراجعة وملاحظة حالة الجلد أو فروة الرأس بصورة مباشرة قبل مناقشة أي خطوة عناية.",
-            tag: "تقييم فردي مباشر",
-          },
-          {
-            num: "02",
-            title: "ملاءمة العناية لطبيعة كل حالة",
-            body: "تختلف احتياجات البشرة والشعر باختلاف العمر ونمط الحياة والعوامل البيئية، لذا تُناقش الخيارات المناسبة لكل حالة على حدة.",
-            tag: "توجيه شخصي متوازن",
-          },
-          {
-            num: "03",
-            title: "احترام الملامح والتوازن الطبيعي",
-            body: "يرتكز الاهتمام بتجميل الجلد وتجديده ومقاومة شيخوخة البشرة على العناية بجودة الجلد ونضارته بهدوء ودون مبالغة.",
-            tag: "عناية هادئة وواقعية",
-          },
-        ]
-      : [
-          {
-            num: "01",
-            title: "Attentive Listening & Clinical Assessment",
-            body: "Every visit begins with understanding individual concerns and examining skin or scalp condition in person before discussing options.",
-            tag: "Direct Clinical Evaluation",
-          },
-          {
-            num: "02",
-            title: "Individualized Care Orientation",
-            body: "Because skin and hair needs vary with age, lifestyle, and environment, guidance is tailored to each person rather than preset templates.",
-            tag: "Tailored Discussion",
-          },
-          {
-            num: "03",
-            title: "Respecting Natural Harmony",
-            body: "Cosmetic dermatology and skin rejuvenation focus on supporting skin quality and vitality with restraint and realistic expectations.",
-            tag: "Measured Refinement",
-          },
-        ];
-
   return (
     <div className="flex flex-col w-full bg-surface">
-      {/* 1. TOP ASYMMETRIC PROFILE & PORTRAIT SPREAD (Stitch Screen 1) */}
-      <section className="w-full py-12 md:py-16 lg:py-20">
-        <div className="mx-auto max-w-[1440px] px-5 md:px-12 lg:px-16">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
-            {/* Editorial Biography Column */}
-            <div className="lg:col-span-7 flex flex-col gap-7">
-              <div className="flex flex-wrap items-center gap-3">
-                <span className="px-3 py-1 bg-surface-high text-primary text-[11px] font-semibold rounded">
-                  {dict.about.kicker}
-                </span>
-                <span
-                  className="w-8 h-px bg-outline-variant"
-                  aria-hidden="true"
-                />
-                <span className="text-xs font-medium text-secondary">
-                  {doctorProfile.title[locale]} ·{" "}
-                  {doctorProfile.cityShort[locale]}
-                </span>
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <h1 className="font-editorial text-4xl sm:text-5xl lg:text-[54px] text-primary leading-tight">
-                  {dict.about.heading}
+      {/* 1. EDITORIAL PROFILE & ARCHED PORTRAIT SPREAD */}
+      <section className="w-full pt-10 pb-20 sm:pt-14 sm:pb-28 lg:pb-36 overflow-x-clip">
+        <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-14">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-14 lg:gap-16 items-center">
+            {/* Editorial Biography Column (7 cols) */}
+            <div className="lg:col-span-7 space-y-8">
+              <div className="space-y-3">
+                <span className="editorial-kicker">{dict.about.kicker}</span>
+                <h1 className="font-editorial text-[clamp(2.6rem,5.2vw,5rem)] text-primary leading-[1.15]">
+                  <LineReveal immediate delay={0.05}>
+                    {dict.about.heading}
+                  </LineReveal>
                 </h1>
                 <p>
                   <span
                     dir="ltr"
-                    className="inline-block font-en-label text-[11px] font-medium text-secondary"
+                    className="inline-block font-latin-italic text-base sm:text-lg text-copper-700"
                   >
-                    Dr. Ghada Alotaibi · Consultant Dermatologist
+                    Dr. Ghada Alotaibi, Consultant Dermatologist — Riyadh
                   </span>
                 </p>
               </div>
 
-              {/* Verified Extended Biography */}
-              <div className="space-y-4 text-base sm:text-[17px] text-on-surface leading-relaxed font-light max-w-2xl">
+              <Reveal immediate delay={0.2} className="space-y-5 max-w-[64ch]">
                 {doctorProfile.extendedBio[locale].map((paragraph, idx) => (
-                  <p key={idx}>{paragraph}</p>
-                ))}
-              </div>
-
-              {/* Structured Metadata Matrix (Strictly Verified Facts — Zero Fabricated Degrees/Years) */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 bg-surface-low border border-surface-high p-6 rounded-lg">
-                <div className="flex flex-col gap-1">
-                  <span className="text-[10px] font-semibold text-secondary">
-                    {dict.about.roleLabel}
-                  </span>
-                  <span className="font-editorial text-[21px] text-primary">
-                    {doctorProfile.title[locale]}
-                  </span>
-                  <span className="text-xs text-on-surface-variant">
-                    {locale === "ar"
-                      ? "الأمراض الجلدية وتجميل الجلد"
-                      : "Clinical & Cosmetic Dermatology"}
-                  </span>
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <span className="text-[10px] font-semibold text-secondary">
-                    {dict.about.locationLabel}
-                  </span>
-                  <span className="font-editorial text-[21px] text-primary">
-                    {doctorProfile.cityShort[locale]}
-                  </span>
-                  <span className="text-xs text-on-surface-variant">
-                    {locale === "ar"
-                      ? "المملكة العربية السعودية"
-                      : "Saudi Arabia"}
-                  </span>
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <span className="text-[10px] font-semibold text-secondary">
-                    {dict.about.coordinationLabel}
-                  </span>
-                  <a
-                    href={doctorProfile.contact.whatsappDirectUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-editorial text-[20px] text-primary hover:text-secondary underline underline-offset-4"
+                  <p
+                    key={idx}
+                    className="text-base sm:text-[17.5px] text-on-surface-variant font-light leading-[1.95]"
                   >
-                    <span dir="ltr">
-                      {doctorProfile.contact.whatsappDisplay}
-                    </span>
-                  </a>
-                  <span className="text-xs text-on-surface-variant">
-                    {locale === "ar"
-                      ? "تنسيق المواعيد عبر واتساب"
-                      : "WhatsApp Coordination"}
-                  </span>
-                </div>
-              </div>
+                    {paragraph}
+                  </p>
+                ))}
+              </Reveal>
 
-              {/* Specialization Highlight Card (Factual Summary — Not an invented personal quote) */}
-              <div className="bg-surface-lowest border border-surface-high p-6 sm:p-7 rounded-lg shadow-xs space-y-3">
-                <span className="editorial-kicker">
-                  {dict.about.specializationHeading}
-                </span>
-                <p className="font-editorial text-xl sm:text-[25px] text-primary leading-snug">
-                  {doctorProfile.specializationSummary[locale]}
-                </p>
-              </div>
+              {/* Hairline-Divided Verified Facts Row (Zero Boxy Cards) */}
+              <Reveal immediate delay={0.3} className="pt-2">
+                <DrawLine className="mb-7" />
+                <dl className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-0">
+                  <div className="sm:pe-6 sm:border-e border-copper-500/30">
+                    <dt className="text-xs text-copper-700">
+                      {dict.about.roleLabel}
+                    </dt>
+                    <dd className="font-editorial text-2xl text-primary mt-1">
+                      {doctorProfile.title[locale]}
+                    </dd>
+                  </div>
+                  <div className="sm:px-6 sm:border-e border-copper-500/30">
+                    <dt className="text-xs text-copper-700">
+                      {dict.about.locationLabel}
+                    </dt>
+                    <dd className="font-editorial text-2xl text-primary mt-1">
+                      {doctorProfile.city[locale]}
+                    </dd>
+                  </div>
+                  <div className="sm:ps-6">
+                    <dt className="text-xs text-copper-700">
+                      {dict.about.coordinationLabel}
+                    </dt>
+                    <dd className="font-editorial text-2xl text-primary mt-1">
+                      <a
+                        href={doctorProfile.contact.whatsappDirectUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-copper-700 transition-colors"
+                      >
+                        <span dir="ltr">
+                          {doctorProfile.contact.whatsappDisplay}
+                        </span>
+                      </a>
+                    </dd>
+                  </div>
+                </dl>
+              </Reveal>
 
-              {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-4 pt-1">
-                <Link
-                  href={`/${locale}/consultation`}
-                  className="editorial-fade inline-flex items-center justify-center gap-2.5 bg-primary-container text-on-primary text-xs font-medium px-8 h-12 rounded hover:bg-primary-hover shadow-xs"
-                >
-                  <span>{dict.about.ctaButton}</span>
-                  <StitchIcon name={dirArrow} size={15} />
-                </Link>
+              <Reveal
+                immediate
+                delay={0.38}
+                className="flex flex-wrap items-center gap-6 pt-2"
+              >
+                <Magnetic strength={7}>
+                  <Link
+                    href={`/${locale}/consultation`}
+                    className="btn-pill-primary text-xs sm:text-sm"
+                  >
+                    <span>{dict.about.ctaButton}</span>
+                    <StitchIcon name={dirArrow} size={15} />
+                  </Link>
+                </Magnetic>
 
                 <a
-                  href={doctorProfile.contact.whatsappDirectUrl}
+                  href={doctorProfile.contact.instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="editorial-fade inline-flex items-center justify-center gap-2 bg-surface-high text-primary text-xs font-medium px-6 h-12 rounded hover:bg-surface-container"
+                  className="copper-link text-xs sm:text-sm text-primary hover:text-copper-700"
                 >
-                  <StitchIcon name="chat" size={16} className="text-secondary" />
-                  <span>
-                    {locale === "ar"
-                      ? "تواصل مباشر عبر واتساب"
-                      : "Direct WhatsApp"}
-                  </span>
+                  <StitchIcon
+                    name="camera"
+                    size={15}
+                    className="text-copper-500"
+                  />
+                  <span dir="ltr">{doctorProfile.contact.instagramHandle}</span>
                 </a>
-              </div>
+              </Reveal>
             </div>
 
-            {/* Original Studio Portrait Frame */}
-            <div className="lg:col-span-5 flex flex-col gap-4">
-              <div className="relative rounded-lg overflow-hidden bg-surface-high shadow-md border border-surface-high">
-                <Image
-                  src={doctorProfile.portraits.editorial.src}
-                  alt={doctorProfile.portraits.editorial.alt[locale]}
-                  width={doctorProfile.portraits.editorial.width}
-                  height={doctorProfile.portraits.editorial.height}
-                  priority
-                  sizes="(max-width: 1024px) 92vw, 40vw"
-                  className="w-full h-[500px] sm:h-[560px] object-cover object-top"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent flex flex-col justify-end p-6 sm:p-7 text-on-primary">
-                  <span
-                    dir="ltr"
-                    className="font-en-label text-[10px] opacity-85"
-                  >
-                    Consultant Dermatologist
-                  </span>
-                  <span className="font-editorial text-2xl mt-0.5">
-                    {doctorProfile.shortSignature[locale]}
-                  </span>
-                  <p className="text-xs opacity-90 mt-1">
-                    {doctorProfile.portraits.editorial.caption[locale]}
-                  </p>
-                </div>
-              </div>
-
-              {/* Official Account Reference Card */}
-              <div className="bg-surface-low border border-surface-high p-4 rounded-lg flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded bg-tertiary-fixed flex items-center justify-center text-primary shrink-0">
-                    <StitchIcon name="camera" size={18} />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs font-medium text-primary">
-                      {locale === "ar"
-                        ? "الحساب الرسمي على إنستغرام"
-                        : "Official Instagram Profile"}
-                    </span>
-                    <a
-                      href={doctorProfile.contact.instagramUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs text-secondary hover:text-primary underline underline-offset-4"
-                    >
-                      <span dir="ltr">
-                        {doctorProfile.contact.instagramHandle}
-                      </span>
-                    </a>
-                  </div>
-                </div>
-                <span className="text-[11px] font-medium bg-surface-lowest border border-surface-high text-secondary px-2.5 py-1 rounded">
-                  {doctorProfile.cityShort[locale]}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 2. THREE PRACTICE PRINCIPLES (Stitch Screen 1 Section 2) */}
-      <section className="w-full bg-surface-low py-16 md:py-20 border-t border-b border-surface-high">
-        <div className="mx-auto max-w-[1440px] px-5 md:px-12 lg:px-16">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
-            <div className="flex flex-col gap-2 max-w-xl">
-              <span className="editorial-kicker">
-                {locale === "ar"
-                  ? "ركائز العناية المهنية"
-                  : "Care Orientation"}
-              </span>
-              <h2 className="font-editorial text-3xl sm:text-[38px] text-primary">
-                {locale === "ar"
-                  ? "منطلقات الاستشارة الجلدية والتجميلية"
-                  : "Foundations of Clinical & Cosmetic Care"}
-              </h2>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            {practicePillars.map((pillar) => (
-              <div
-                key={pillar.num}
-                className="bg-surface-lowest border border-surface-high/80 p-7 rounded-lg shadow-xs flex flex-col justify-between"
-              >
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-center justify-between">
-                    <span
-                      dir="ltr"
-                      className="font-editorial text-4xl text-outline-variant"
-                    >
-                      {pillar.num}
-                    </span>
-                    <div className="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-primary">
-                      <StitchIcon name="verified" size={17} />
-                    </div>
-                  </div>
-
-                  <h3 className="font-editorial text-[22px] text-primary mt-2">
-                    {pillar.title}
-                  </h3>
-                  <p className="text-sm text-on-surface-variant leading-relaxed">
-                    {pillar.body}
-                  </p>
-                </div>
-
-                <div className="pt-5 mt-6 border-t border-surface-high text-xs font-medium text-secondary">
-                  {pillar.tag}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 3. SCOPE OF FOCUS AREAS + SECONDARY PORTRAIT */}
-      <section className="w-full py-16 md:py-22">
-        <div className="mx-auto max-w-[1440px] px-5 md:px-12 lg:px-16">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+            {/* Arched Original Portrait + Offset Copper Frame (5 cols) */}
             <div className="lg:col-span-5">
-              <div className="rounded-lg overflow-hidden bg-surface-high border border-surface-high max-w-md mx-auto">
+              <div className="relative mx-auto max-w-[400px] lg:max-w-[430px]">
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -end-3.5 -top-3.5 w-full h-full rounded-t-full rounded-b-[22px] border border-copper-500/45"
+                />
+                <MaskReveal variant="arch" immediate delay={0.12}>
+                  <div className="overflow-hidden rounded-t-full rounded-b-[22px] bg-surface-high aspect-[3.8/5]">
+                    <ParallaxBox offsetPercent={5} className="w-full h-full">
+                      <Image
+                        src={doctorProfile.portraits.editorial.src}
+                        alt={doctorProfile.portraits.editorial.alt[locale]}
+                        width={doctorProfile.portraits.editorial.width}
+                        height={doctorProfile.portraits.editorial.height}
+                        priority
+                        sizes="(max-width: 1024px) 88vw, 430px"
+                        className="w-full h-full object-cover object-top scale-[1.06]"
+                      />
+                    </ParallaxBox>
+                  </div>
+                </MaskReveal>
+                <p className="mt-4 text-xs text-on-surface-variant text-center">
+                  {doctorProfile.portraits.editorial.caption[locale]}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. SPECIALIZATION & SCOPE OF FOCUS SPREAD */}
+      <section className="w-full bg-surface-low/65 py-20 sm:py-28 lg:py-34 border-y border-copper-500/20">
+        <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-14 grid grid-cols-1 lg:grid-cols-12 gap-14 lg:gap-16 items-center">
+          <div className="lg:col-span-5 order-2 lg:order-1">
+            <MaskReveal variant="rounded">
+              <div className="overflow-hidden rounded-[26px] border border-copper-500/35 bg-surface-lowest max-w-sm mx-auto aspect-[3.8/4.8]">
                 <Image
                   src={doctorProfile.portraits.standing.src}
                   alt={doctorProfile.portraits.standing.alt[locale]}
                   width={doctorProfile.portraits.standing.width}
                   height={doctorProfile.portraits.standing.height}
-                  sizes="(max-width: 1024px) 85vw, 36vw"
-                  className="w-full h-auto aspect-[3/4] object-cover object-top"
+                  sizes="(max-width: 1024px) 80vw, 360px"
+                  className="w-full h-full object-cover object-top"
                 />
               </div>
-            </div>
-
-            <div className="lg:col-span-7 flex flex-col gap-5">
-              <span className="editorial-kicker">
-                {dict.about.focusListHeading}
-              </span>
-              <h2 className="font-editorial text-3xl sm:text-[38px] text-primary leading-tight">
-                {doctorProfile.specializationSummary[locale]}
-              </h2>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                {doctorProfile.focusAreas[locale].map((focusItem) => (
-                  <div
-                    key={focusItem}
-                    className="p-5 bg-surface-lowest border border-surface-high rounded-lg shadow-xs flex items-center gap-3.5"
-                  >
-                    <div className="w-8 h-8 rounded bg-surface-container shrink-0 flex items-center justify-center text-primary">
-                      <StitchIcon name="dermatology" size={16} />
-                    </div>
-                    <span className="text-sm font-medium text-primary">
-                      {focusItem}
-                    </span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="pt-4">
-                <Link
-                  href={`/${locale}/areas-of-care`}
-                  className="inline-flex items-center gap-2 text-xs font-medium text-primary underline underline-offset-4 hover:text-secondary"
-                >
-                  <span>{dict.home.areasViewAll}</span>
-                  <StitchIcon name={dirArrow} size={14} />
-                </Link>
-              </div>
-            </div>
+            </MaskReveal>
           </div>
+
+          <Reveal className="lg:col-span-7 order-1 lg:order-2 space-y-6">
+            <span className="editorial-kicker">
+              {dict.about.specializationHeading}
+            </span>
+            <h2 className="font-editorial text-3xl sm:text-5xl text-primary leading-[1.2]">
+              {doctorProfile.specializationSummary[locale]}
+            </h2>
+            <BotanicalCopperOrnament />
+
+            <div className="pt-4 space-y-4">
+              <h3 className="text-xs text-copper-700">
+                {dict.about.focusListHeading}
+              </h3>
+              <ul className="divide-y divide-copper-500/20 border-t border-b border-copper-500/20">
+                {doctorProfile.focusAreas[locale].map((focusItem, idx) => (
+                  <li
+                    key={focusItem}
+                    className="py-4 flex items-start gap-3.5 text-base text-primary"
+                  >
+                    <CopperLeafDot delay={idx * 0.1} />
+                    <span>{focusItem}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Reveal>
         </div>
       </section>
 
       {/* Optional Verified Credentials — Hidden automatically when arrays are empty */}
       {hasAnyStructuredCredentials && (
-        <section className="mx-auto max-w-[1440px] w-full px-5 md:px-12 lg:px-16 pb-16">
+        <section className="mx-auto max-w-[1440px] w-full px-5 sm:px-8 lg:px-14 py-16">
           <VerifiedCredentialSection
             heading={dict.about.qualificationsHeading}
             items={doctorProfile.qualifications}
@@ -460,25 +313,27 @@ export default async function AboutDoctorPage({
         </section>
       )}
 
-      {/* 4. TRANSPARENCY & APPOINTMENT COORDINATION FOOTER BAND */}
-      <section className="w-full bg-surface-low border-t border-surface-high py-16">
-        <div className="mx-auto max-w-4xl px-5 md:px-12 text-center space-y-5">
-          <h2 className="font-editorial text-3xl sm:text-4xl text-primary">
+      {/* 3. QUIET APPOINTMENT INVITATION */}
+      <section className="w-full py-20 sm:py-28 text-center">
+        <Reveal className="mx-auto max-w-2xl px-5 space-y-6">
+          <h2 className="font-editorial text-3xl sm:text-5xl text-primary leading-tight">
             {dict.about.ctaHeading}
           </h2>
-          <p className="text-sm sm:text-base text-on-surface-variant max-w-xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base text-on-surface-variant leading-[1.9]">
             {dict.about.ctaBody}
           </p>
           <div className="pt-2">
-            <Link
-              href={`/${locale}/consultation`}
-              className="editorial-fade inline-flex items-center justify-center gap-2 bg-primary-container text-on-primary text-xs font-medium px-8 h-12 rounded hover:bg-primary-hover shadow-xs"
-            >
-              <span>{dict.about.ctaButton}</span>
-              <StitchIcon name={dirArrow} size={15} />
-            </Link>
+            <Magnetic strength={7}>
+              <Link
+                href={`/${locale}/consultation`}
+                className="btn-pill-primary text-xs sm:text-sm"
+              >
+                <span>{dict.about.ctaButton}</span>
+                <StitchIcon name={dirArrow} size={15} />
+              </Link>
+            </Magnetic>
           </div>
-        </div>
+        </Reveal>
       </section>
     </div>
   );

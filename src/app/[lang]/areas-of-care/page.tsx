@@ -6,8 +6,15 @@ import { isValidLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { buildPageMetadata } from "@/lib/seo";
 import { areasOfCare } from "@/content/areas";
-import { doctorProfile } from "@/content/doctor";
 import { StitchIcon, type StitchIconName } from "@/components/StitchIcon";
+import {
+  CopperLeafDot,
+  LineReveal,
+  Magnetic,
+  MaskReveal,
+  ParallaxBox,
+  Reveal,
+} from "@/lib/motion";
 
 export async function generateMetadata({
   params,
@@ -26,30 +33,11 @@ export async function generateMetadata({
   });
 }
 
-const areaVisualMap: Record<
-  string,
-  { src: string; icon: StitchIconName; fieldCode: string }
-> = {
-  "skin-health": {
-    src: "/images/editorial/care-skin-radiance.jpg",
-    icon: "shield",
-    fieldCode: "FIELD 01 · SKIN HEALTH",
-  },
-  "hair-scalp": {
-    src: "/images/editorial/care-hair-waves.jpg",
-    icon: "hair",
-    fieldCode: "FIELD 02 · SCALP & HAIR",
-  },
-  "skin-aging": {
-    src: "/images/editorial/cream-jar-shadow.jpg",
-    icon: "hourglass",
-    fieldCode: "FIELD 03 · WELL-AGING",
-  },
-  "cosmetic-rejuvenation": {
-    src: "/images/editorial/care-serum-dropper.jpg",
-    icon: "sparkle",
-    fieldCode: "FIELD 04 · REJUVENATION",
-  },
+const areaVisualMap: Record<string, string> = {
+  "skin-health": "/images/editorial/care-skin-radiance.jpg",
+  "hair-scalp": "/images/editorial/care-hair-waves.jpg",
+  "skin-aging": "/images/editorial/cream-jar-shadow.jpg",
+  "cosmetic-rejuvenation": "/images/editorial/care-serum-dropper.jpg",
 };
 
 export default async function AreasOfCarePage({
@@ -67,141 +55,99 @@ export default async function AreasOfCarePage({
 
   return (
     <div className="flex flex-col w-full bg-surface">
-      {/* 1. TOP CURATORIAL HEADER (Stitch Screen 2 Header — Verified Metrics Only) */}
-      <section className="w-full py-12 md:py-16 bg-surface-low/70 border-b border-surface-high">
-        <div className="mx-auto max-w-[1440px] px-5 md:px-12 lg:px-16 flex flex-col lg:flex-row lg:items-end justify-between gap-8">
-          <div className="flex flex-col gap-3 max-w-2xl">
-            <div className="flex items-center gap-2 text-secondary">
-              <span className="w-2 h-2 rounded-full bg-secondary" />
-              <span className="editorial-kicker">{dict.areas.kicker}</span>
-            </div>
-            <h1 className="font-editorial text-3xl sm:text-5xl text-primary leading-tight">
-              {dict.areas.heading}
+      {/* Editorial Header */}
+      <section className="w-full pt-10 pb-14 sm:pt-14 sm:pb-20 border-b border-copper-500/20">
+        <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-14 space-y-6">
+          <div className="max-w-3xl space-y-4">
+            <span className="editorial-kicker">{dict.areas.kicker}</span>
+            <h1 className="font-editorial text-[clamp(2.5rem,5vw,4.8rem)] text-primary leading-[1.15]">
+              <LineReveal immediate delay={0.05}>
+                {dict.areas.heading}
+              </LineReveal>
             </h1>
-            <p className="text-base sm:text-[17px] text-on-surface-variant font-light leading-relaxed">
-              {dict.areas.lead}
+            <Reveal immediate delay={0.18}>
+              <p className="text-base sm:text-[18px] text-on-surface-variant font-light leading-[1.9] max-w-[64ch]">
+                {dict.areas.lead}
+              </p>
+            </Reveal>
+          </div>
+
+          <Reveal immediate delay={0.26}>
+            <p className="text-xs sm:text-sm text-on-surface-variant border-s border-copper-500/55 ps-4 py-1 max-w-[66ch] leading-[1.85]">
+              {dict.areas.disclaimer}
             </p>
-          </div>
-
-          {/* Factual Quick Overview Box */}
-          <div className="flex items-center gap-6 bg-surface-lowest border border-surface-high p-5 rounded-xl shadow-xs self-start lg:self-auto">
-            <div className="flex flex-col">
-              <span className="font-editorial text-2xl text-primary" dir="ltr">
-                04
-              </span>
-              <span className="text-[11px] text-secondary font-medium">
-                {locale === "ar" ? "مجالات عناية رئيسية" : "Core Care Pillars"}
-              </span>
-            </div>
-            <div className="w-px h-9 bg-surface-high" />
-            <div className="flex flex-col">
-              <span className="font-editorial text-2xl text-primary">
-                {doctorProfile.cityShort[locale]}
-              </span>
-              <span className="text-[11px] text-secondary font-medium">
-                {doctorProfile.title[locale]}
-              </span>
-            </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
-      {/* 2. STICKY AREA ANCHOR PILL BAR (Stitch Screen 2 Sticky Bar) */}
-      <section className="w-full bg-surface-bright border-b border-surface-high sticky top-20 z-30 shadow-[0_1px_4px_rgba(0,0,0,0.02)]">
-        <div className="mx-auto max-w-[1440px] px-5 md:px-12 lg:px-16 py-2.5 flex items-center justify-between gap-4 overflow-x-auto">
-          <div className="flex items-center gap-2.5 whitespace-nowrap">
-            {areasOfCare.map((area) => (
-              <a
-                key={area.id}
-                href={`#${area.id}`}
-                className="editorial-fade px-4 py-1.5 rounded-full text-xs font-medium text-on-surface-variant bg-surface-low hover:bg-secondary-container hover:text-primary border border-surface-high/70"
-              >
-                <span dir="ltr" className="me-1.5 text-secondary">
-                  {area.number}.
-                </span>
-                {area.title[locale]}
-              </a>
-            ))}
-          </div>
-
-          <span className="hidden xl:flex items-center gap-1.5 text-[11px] text-outline shrink-0">
-            <StitchIcon name="verified" size={15} className="text-secondary" />
-            <span>
-              {doctorProfile.shortSignature[locale]} ·{" "}
-              {doctorProfile.cityShort[locale]}
-            </span>
-          </span>
-        </div>
-      </section>
-
-      {/* 3. ALTERNATING 12-COL EDITORIAL CHAPTERS FOR ALL 4 CONFIRMED AREAS */}
-      <div className="divide-y divide-surface-high">
+      {/* Alternating Editorial Chapters */}
+      <div className="divide-y divide-copper-500/20">
         {areasOfCare.map((area, index) => {
-          const visual = areaVisualMap[area.id] || areaVisualMap["skin-health"];
           const isEven = index % 2 === 1;
+          const imgSrc =
+            areaVisualMap[area.id] || "/images/editorial/care-skin-radiance.jpg";
 
           return (
             <section
               key={area.id}
               id={area.id}
-              className={`w-full py-14 md:py-20 scroll-mt-32 ${
-                isEven ? "bg-surface-low/45" : "bg-surface"
+              className={`w-full py-20 sm:py-28 lg:py-32 scroll-mt-24 ${
+                isEven ? "bg-surface-low/50" : "bg-surface"
               }`}
             >
-              <div className="mx-auto max-w-[1440px] px-5 md:px-12 lg:px-16 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-                {/* Editorial Visual Frame with Stitch Floating Field Labels */}
+              <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-14 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+                {/* Arched / Rounded Visual Frame */}
                 <div
-                  className={`lg:col-span-6 ${
+                  className={`lg:col-span-5 ${
                     isEven ? "lg:order-2" : "lg:order-1"
                   }`}
                 >
-                  <div className="relative overflow-hidden rounded-xl bg-surface-low shadow-xs border border-surface-high">
-                    <Image
-                      src={visual.src}
-                      alt={area.title[locale]}
-                      width={900}
-                      height={900}
-                      sizes="(max-width: 1024px) 92vw, 46vw"
-                      className="w-full h-[360px] sm:h-[440px] object-cover hover:scale-103 editorial-fade"
+                  <div className="relative max-w-[400px] mx-auto">
+                    <div
+                      aria-hidden="true"
+                      className={`pointer-events-none absolute -top-3 ${
+                        isEven
+                          ? "-end-3"
+                          : "-start-3"
+                      } w-full h-full ${
+                        index % 2 === 0
+                          ? "rounded-t-full rounded-b-[22px]"
+                          : "rounded-[26px]"
+                      } border border-copper-500/40`}
                     />
-
-                    <div className="absolute top-3.5 start-3.5 bg-surface-lowest/95 px-3.5 py-1.5 rounded-lg shadow-xs">
-                      <span
-                        dir="ltr"
-                        className="font-en-label text-[10px] font-semibold text-secondary"
+                    <MaskReveal variant={index % 2 === 0 ? "arch" : "rounded"}>
+                      <div
+                        className={`overflow-hidden bg-surface-high aspect-[4/4.6] ${
+                          index % 2 === 0
+                            ? "rounded-t-full rounded-b-[22px]"
+                            : "rounded-[26px]"
+                        }`}
                       >
-                        {visual.fieldCode}
-                      </span>
-                    </div>
-
-                    <div className="absolute bottom-4 inset-x-4 bg-surface-lowest/95 p-4 rounded-lg shadow-xs flex items-center justify-between gap-3 border border-surface-high/80">
-                      <div className="flex flex-col">
-                        <span className="text-[10px] font-semibold text-secondary">
-                          {area.kicker[locale]}
-                        </span>
-                        <span className="font-editorial text-lg sm:text-xl text-primary">
-                          {area.title[locale]}
-                        </span>
+                        <ParallaxBox offsetPercent={5} className="w-full h-full">
+                          <Image
+                            src={imgSrc}
+                            alt={area.title[locale]}
+                            width={900}
+                            height={900}
+                            sizes="(max-width: 1024px) 88vw, 400px"
+                            className="w-full h-full object-cover scale-[1.06]"
+                          />
+                        </ParallaxBox>
                       </div>
-                      <StitchIcon
-                        name={visual.icon}
-                        size={22}
-                        className="text-secondary shrink-0"
-                      />
-                    </div>
+                    </MaskReveal>
                   </div>
                 </div>
 
-                {/* Area Description, Examples Cards & Pre-selected Consultation CTA */}
-                <div
-                  className={`lg:col-span-6 flex flex-col gap-5 ${
+                {/* Editorial Chapter Text & Examples */}
+                <Reveal
+                  className={`lg:col-span-7 space-y-6 ${
                     isEven ? "lg:order-1" : "lg:order-2"
                   }`}
                 >
-                  <div className="flex items-center gap-2.5">
+                  <div className="flex items-baseline gap-4">
                     <span
                       dir="ltr"
-                      className="text-[11px] font-semibold bg-tertiary-fixed text-primary px-2.5 py-1 rounded"
+                      className="numeral-copper-outline text-5xl sm:text-6xl select-none"
                     >
                       {area.number}
                     </span>
@@ -210,98 +156,67 @@ export default async function AreasOfCarePage({
                     </span>
                   </div>
 
-                  <h2 className="font-editorial text-3xl sm:text-[40px] text-primary leading-tight">
+                  <h2 className="font-editorial text-3xl sm:text-5xl text-primary leading-[1.2]">
                     {area.title[locale]}
                   </h2>
 
-                  <p className="text-base sm:text-[17px] text-on-surface-variant font-light leading-relaxed">
+                  <p className="text-base sm:text-[17.5px] text-on-surface-variant font-light leading-[1.9] max-w-[62ch]">
                     {area.description[locale]}
                   </p>
 
-                  {/* Consultation Reasons Sub-Cards */}
-                  <div className="bg-surface-lowest border border-surface-high p-5 sm:p-6 rounded-xl shadow-xs space-y-3.5">
-                    <div className="flex items-center gap-2 text-primary">
-                      <StitchIcon
-                        name="support"
-                        size={17}
-                        className="text-secondary"
-                      />
-                      <h3 className="font-editorial text-lg font-medium">
-                        {dict.areas.examplesHeading}
-                      </h3>
-                    </div>
-
-                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="pt-4 border-t border-copper-500/20 space-y-4">
+                    <h3 className="text-xs text-copper-700">
+                      {dict.areas.examplesHeading}
+                    </h3>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {area.consultationExamples[locale].map((example, idx) => (
                         <li
                           key={idx}
-                          className="flex items-start gap-2 text-xs sm:text-[13.5px] text-on-surface-variant leading-relaxed"
+                          className="flex items-start gap-3 text-sm text-primary leading-[1.85]"
                         >
-                          <span className="mt-2 w-1.5 h-1.5 rounded-full bg-secondary shrink-0" />
+                          <CopperLeafDot delay={idx * 0.08} />
                           <span>{example}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  <div className="pt-2 flex flex-wrap items-center gap-4">
-                    <Link
-                      href={`/${locale}/consultation?area=${area.consultationTopicKey}`}
-                      className="editorial-fade inline-flex items-center justify-center gap-2 bg-primary-container text-on-primary text-xs font-medium px-7 h-12 rounded hover:bg-primary-hover shadow-xs"
-                    >
-                      <span>{dict.areas.inquireButton}</span>
-                      <StitchIcon name={dirArrow} size={15} />
-                    </Link>
+                  <div className="pt-3">
+                    <Magnetic strength={6}>
+                      <Link
+                        href={`/${locale}/consultation?area=${area.consultationTopicKey}`}
+                        className="btn-pill-primary text-xs sm:text-sm"
+                      >
+                        <span>{dict.areas.inquireButton}</span>
+                        <StitchIcon name={dirArrow} size={15} />
+                      </Link>
+                    </Magnetic>
                   </div>
-                </div>
+                </Reveal>
               </div>
             </section>
           );
         })}
       </div>
 
-      {/* 4. MEDICAL DISCLAIMER & DIRECT CONSULTATION FOOTER CARD (Stitch Screen 2 Bottom) */}
-      <section className="w-full py-14 md:py-18 bg-surface-low border-t border-surface-high">
-        <div className="mx-auto max-w-5xl px-5 md:px-12">
-          <div className="bg-surface-lowest border border-surface-high p-6 sm:p-9 rounded-xl shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div className="space-y-2 max-w-2xl">
-              <div className="flex items-center gap-2 text-primary">
-                <StitchIcon
-                  name="info"
-                  size={18}
-                  className="text-secondary shrink-0"
-                />
-                <h2 className="font-editorial text-xl font-medium">
-                  {locale === "ar"
-                    ? "تنويه مهني حول مجالات العناية"
-                    : "Clinical Orientation Note"}
-                </h2>
-              </div>
-              <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
-                {dict.areas.disclaimer} {dict.areas.closingNote}
-              </p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row md:flex-col gap-2.5 w-full md:w-auto shrink-0">
-              <Link
-                href={`/${locale}/consultation`}
-                className="editorial-fade inline-flex items-center justify-center gap-2 bg-primary-container text-on-primary text-xs font-medium px-6 h-11 rounded hover:bg-primary-hover"
-              >
-                <StitchIcon name="calendar" size={16} />
-                <span>{dict.nav.consultation}</span>
-              </Link>
-              <a
-                href={doctorProfile.contact.whatsappDirectUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="editorial-fade inline-flex items-center justify-center gap-2 bg-surface-low border border-surface-high text-primary text-xs font-medium px-6 h-11 rounded hover:bg-surface-container"
-              >
-                <StitchIcon name="chat" size={15} className="text-secondary" />
-                <span>{dict.home.closingWhatsappCta}</span>
-              </a>
-            </div>
-          </div>
-        </div>
+      {/* Multi-Topic Closing Note */}
+      <section className="w-full py-16 sm:py-20 bg-surface-low border-t border-copper-500/20 text-center">
+        <Reveal className="mx-auto max-w-2xl px-5 space-y-4">
+          <p className="text-sm sm:text-base text-on-surface-variant leading-[1.9]">
+            {dict.areas.closingNote}
+          </p>
+          <Link
+            href={`/${locale}/consultation`}
+            className="copper-link text-sm text-primary hover:text-copper-700"
+          >
+            <span>{dict.nav.consultation}</span>
+            <StitchIcon
+              name={dirArrow}
+              size={14}
+              className="text-copper-500"
+            />
+          </Link>
+        </Reveal>
       </section>
     </div>
   );

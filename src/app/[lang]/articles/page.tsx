@@ -5,7 +5,7 @@ import { getDictionary } from "@/i18n/dictionaries";
 import { buildPageMetadata } from "@/lib/seo";
 import { getPublicArticles } from "@/content/articles";
 import { ArticlesExplorer } from "@/components/ArticlesExplorer";
-import { StitchIcon } from "@/components/StitchIcon";
+import { LineReveal, Reveal } from "@/lib/motion";
 
 export async function generateMetadata({
   params,
@@ -38,36 +38,23 @@ export default async function ArticlesArchivePage({
 
   return (
     <div className="flex flex-col w-full bg-surface">
-      {/* Top Archive Ribbon (Stitch Screen 3) */}
-      <div className="w-full bg-surface-low border-b border-surface-high py-2.5">
-        <div className="mx-auto max-w-[1440px] px-5 md:px-12 lg:px-16 flex flex-wrap items-center justify-between gap-2 text-[11px] font-medium text-secondary">
-          <div className="flex items-center gap-2">
-            <span className="inline-block w-2 h-2 rounded-full bg-secondary" />
-            <span>{dict.articles.kicker}</span>
-          </div>
-          <span className="text-on-surface-variant">
-            {dict.articles.editorialStandardNote}
-          </span>
-        </div>
-      </div>
-
-      {/* Editorial Masthead */}
-      <section className="mx-auto max-w-[1440px] w-full px-5 md:px-12 lg:px-16 pt-12 pb-8">
-        <div className="max-w-3xl space-y-3">
-          <div className="flex items-center gap-2 text-secondary text-xs font-medium">
-            <StitchIcon name="book" size={16} />
-            <span>{dict.articles.kicker}</span>
-          </div>
-          <h1 className="font-editorial text-3xl sm:text-5xl text-primary leading-tight">
-            {dict.articles.heading}
+      <section className="mx-auto max-w-[1440px] w-full px-5 sm:px-8 lg:px-14 pt-10 pb-12 sm:pt-14 sm:pb-16">
+        <div className="max-w-3xl space-y-4">
+          <span className="editorial-kicker">{dict.articles.kicker}</span>
+          <h1 className="font-editorial text-[clamp(2.5rem,5vw,4.8rem)] text-primary leading-[1.15]">
+            <LineReveal immediate delay={0.05}>
+              {dict.articles.heading}
+            </LineReveal>
           </h1>
-          <p className="text-base sm:text-[17px] text-on-surface-variant font-light leading-relaxed">
-            {dict.articles.lead}
-          </p>
+          <Reveal immediate delay={0.18}>
+            <p className="text-base sm:text-[18px] text-on-surface-variant font-light leading-[1.9] max-w-[62ch]">
+              {dict.articles.lead}
+            </p>
+          </Reveal>
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1440px] w-full px-5 md:px-12 lg:px-16 pb-20">
+      <section className="mx-auto max-w-[1440px] w-full px-5 sm:px-8 lg:px-14 pb-24 sm:pb-32">
         <ArticlesExplorer
           locale={locale}
           dict={dict}
