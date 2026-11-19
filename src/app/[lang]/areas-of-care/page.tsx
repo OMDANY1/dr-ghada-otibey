@@ -91,46 +91,46 @@ export default async function AreasOfCarePage({
             <section
               key={area.id}
               id={area.id}
-              className={`w-full py-20 sm:py-28 lg:py-32 scroll-mt-24 ${
+              className={`w-full py-14 sm:py-20 lg:py-22 scroll-mt-20 ${
                 isEven ? "bg-surface-low/50" : "bg-surface"
               }`}
             >
-              <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-14 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+              <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-14 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
                 {/* Arched / Rounded Visual Frame */}
                 <div
                   className={`lg:col-span-5 ${
                     isEven ? "lg:order-2" : "lg:order-1"
                   }`}
                 >
-                  <div className="relative max-w-[400px] mx-auto">
+                  <div className="relative max-w-[310px] sm:max-w-[340px] xl:max-w-[365px] mx-auto">
                     <div
                       aria-hidden="true"
-                      className={`pointer-events-none absolute -top-3 ${
+                      className={`pointer-events-none absolute -top-2.5 ${
                         isEven
-                          ? "-end-3"
-                          : "-start-3"
+                          ? "-end-2.5"
+                          : "-start-2.5"
                       } w-full h-full ${
                         index % 2 === 0
-                          ? "rounded-t-full rounded-b-[22px]"
-                          : "rounded-[26px]"
+                          ? "rounded-t-full rounded-b-[20px]"
+                          : "rounded-[24px]"
                       } border border-copper-500/40`}
                     />
                     <MaskReveal variant={index % 2 === 0 ? "arch" : "rounded"}>
                       <div
-                        className={`overflow-hidden bg-surface-high aspect-[4/4.6] ${
+                        className={`overflow-hidden bg-surface-high aspect-[4/4.3] ${
                           index % 2 === 0
-                            ? "rounded-t-full rounded-b-[22px]"
-                            : "rounded-[26px]"
+                            ? "rounded-t-full rounded-b-[20px]"
+                            : "rounded-[24px]"
                         }`}
                       >
-                        <ParallaxBox offsetPercent={5} className="w-full h-full">
+                        <ParallaxBox offsetPercent={4} className="w-full h-full">
                           <Image
                             src={imgSrc}
                             alt={area.title[locale]}
                             width={900}
                             height={900}
-                            sizes="(max-width: 1024px) 88vw, 400px"
-                            className="w-full h-full object-cover scale-[1.06]"
+                            sizes="(max-width: 1024px) 340px, 365px"
+                            className="w-full h-full object-cover scale-[1.05]"
                           />
                         </ParallaxBox>
                       </div>
@@ -140,14 +140,14 @@ export default async function AreasOfCarePage({
 
                 {/* Editorial Chapter Text & Examples */}
                 <Reveal
-                  className={`lg:col-span-7 space-y-6 ${
+                  className={`lg:col-span-7 space-y-4 sm:space-y-5 ${
                     isEven ? "lg:order-1" : "lg:order-2"
                   }`}
                 >
                   <div className="flex items-baseline gap-4">
                     <span
                       dir="ltr"
-                      className="numeral-copper-outline text-5xl sm:text-6xl select-none"
+                      className="numeral-copper-outline text-4xl sm:text-5xl select-none"
                     >
                       {area.number}
                     </span>
@@ -156,11 +156,11 @@ export default async function AreasOfCarePage({
                     </span>
                   </div>
 
-                  <h2 className="font-editorial text-3xl sm:text-5xl text-primary leading-[1.2]">
+                  <h2 className="font-editorial text-2xl sm:text-4xl lg:text-[42px] text-primary leading-[1.2]">
                     {area.title[locale]}
                   </h2>
 
-                  <p className="text-base sm:text-[17.5px] text-on-surface-variant font-light leading-[1.9] max-w-[62ch]">
+                  <p className="text-sm sm:text-[16.5px] text-on-surface-variant font-light leading-[1.85] max-w-[62ch]">
                     {area.description[locale]}
                   </p>
 

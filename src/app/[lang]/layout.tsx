@@ -122,7 +122,7 @@ export default async function LocalizedRootLayout({
         <SmoothScrollProvider>
           <Suspense
             fallback={
-              <header className="fixed top-0 inset-x-0 z-50 h-20 bg-transparent" />
+              <header className="fixed top-0 inset-x-0 z-50 h-16 sm:h-[72px] bg-transparent" />
             }
           >
             <SiteHeader locale={locale} dict={dict} />

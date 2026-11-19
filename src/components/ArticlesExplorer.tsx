@@ -163,29 +163,29 @@ export function ArticlesExplorer({
           </Reveal>
 
           {/* Staggered Instagram Educational Themes */}
-          <div className="pt-14 border-t border-copper-500/20 space-y-10">
-            <div className="max-w-2xl space-y-2">
+          <div className="pt-10 border-t border-copper-500/20 space-y-6">
+            <div className="max-w-2xl space-y-1.5">
               <span className="editorial-kicker">
                 {dict.home.topicsKicker}
               </span>
-              <h3 className="font-editorial text-2xl sm:text-4xl text-primary">
+              <h3 className="font-editorial text-2xl sm:text-3xl lg:text-[34px] text-primary leading-[1.18]">
                 {dict.home.topicsHeading}
               </h3>
-              <p className="text-xs sm:text-sm text-on-surface-variant leading-[1.85]">
+              <p className="text-xs sm:text-[13px] text-on-surface-variant leading-[1.7]">
                 {dict.home.topicsDisclaimer}
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-7 items-start">
               {accountTopics.map((topic, idx) => (
                 <Reveal
                   key={topic.id}
-                  delay={idx * 0.1}
-                  className={idx === 1 ? "md:mt-10" : ""}
+                  delay={idx * 0.08}
+                  className={idx === 1 ? "md:mt-3" : ""}
                 >
-                  <div className="group space-y-4">
-                    <div className="p-2 rounded-[24px] border border-transparent group-hover:border-copper-500/50 transition-colors duration-500">
-                      <div className="overflow-hidden rounded-[18px] aspect-[4/3.6] bg-surface-low">
+                  <div className="group space-y-3">
+                    <div className="p-1.5 rounded-[22px] border border-transparent group-hover:border-copper-500/50 transition-colors duration-500">
+                      <div className="overflow-hidden rounded-[16px] aspect-[16/10] max-h-[210px] xl:max-h-[235px] bg-surface-low">
                         <Image
                           src={
                             previewImageMap[topic.id] ||
@@ -200,14 +200,14 @@ export function ArticlesExplorer({
                       </div>
                     </div>
 
-                    <div className="px-2 space-y-2">
-                      <span className="text-xs text-copper-700 block">
+                    <div className="px-1.5 space-y-1.5">
+                      <span className="text-[11.5px] text-copper-700 block">
                         {topic.tag[locale]}
                       </span>
-                      <h4 className="font-editorial text-2xl text-primary leading-snug">
+                      <h4 className="font-editorial text-xl lg:text-[22px] text-primary leading-snug">
                         {topic.title[locale]}
                       </h4>
-                      <p className="text-sm text-on-surface-variant leading-[1.85]">
+                      <p className="text-[13.5px] sm:text-sm text-on-surface-variant leading-[1.72]">
                         {topic.contextNote[locale]}
                       </p>
                       <div className="pt-1">
@@ -249,13 +249,13 @@ export function ArticlesExplorer({
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-7">
           {filteredArticles.map((article) => (
-            <article key={article.slug} className="group space-y-4">
+            <article key={article.slug} className="group space-y-3">
               {article.coverImage && (
                 <Link
                   href={`/${locale}/articles/${article.slug}`}
-                  className="block overflow-hidden rounded-[22px] aspect-[4/3] bg-surface-low"
+                  className="block overflow-hidden rounded-[18px] aspect-[16/10] max-h-[215px] xl:max-h-[240px] bg-surface-low"
                 >
                   <Image
                     src={article.coverImage.src}

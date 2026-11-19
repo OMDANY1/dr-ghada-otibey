@@ -105,14 +105,14 @@ export default async function AboutDoctorPage({
   return (
     <div className="flex flex-col w-full bg-surface">
       {/* 1. EDITORIAL PROFILE & ARCHED PORTRAIT SPREAD */}
-      <section className="w-full pt-10 pb-20 sm:pt-14 sm:pb-28 lg:pb-36 overflow-x-clip">
+      <section className="w-full pt-5 pb-16 sm:pt-8 sm:pb-22 lg:pt-6 lg:pb-24 overflow-x-clip">
         <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-14">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-14 lg:gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
             {/* Editorial Biography Column (7 cols) */}
-            <div className="lg:col-span-7 space-y-8">
-              <div className="space-y-3">
+            <div className="order-2 lg:order-1 lg:col-span-7 space-y-6">
+              <div className="space-y-2">
                 <span className="editorial-kicker">{dict.about.kicker}</span>
-                <h1 className="font-editorial text-[clamp(2.6rem,5.2vw,5rem)] text-primary leading-[1.15]">
+                <h1 className="font-editorial text-[clamp(2.2rem,4.1vw,4rem)] text-primary leading-[1.15]">
                   <LineReveal immediate delay={0.05}>
                     {dict.about.heading}
                   </LineReveal>
@@ -120,18 +120,18 @@ export default async function AboutDoctorPage({
                 <p>
                   <span
                     dir="ltr"
-                    className="inline-block font-latin-italic text-base sm:text-lg text-copper-700"
+                    className="inline-block font-latin-italic text-sm sm:text-base text-copper-700"
                   >
                     Dr. Ghada Alotaibi, Consultant Dermatologist — Riyadh
                   </span>
                 </p>
               </div>
 
-              <Reveal immediate delay={0.2} className="space-y-5 max-w-[64ch]">
+              <Reveal immediate delay={0.2} className="space-y-4 max-w-[64ch]">
                 {doctorProfile.extendedBio[locale].map((paragraph, idx) => (
                   <p
                     key={idx}
-                    className="text-base sm:text-[17.5px] text-on-surface-variant font-light leading-[1.95]"
+                    className="text-sm sm:text-[16.5px] text-on-surface-variant font-light leading-[1.85]"
                   >
                     {paragraph}
                   </p>
@@ -210,28 +210,28 @@ export default async function AboutDoctorPage({
             </div>
 
             {/* Arched Original Portrait + Offset Copper Frame (5 cols) */}
-            <div className="lg:col-span-5">
-              <div className="relative mx-auto max-w-[400px] lg:max-w-[430px]">
+            <div className="order-1 lg:order-2 lg:col-span-5">
+              <div className="relative mx-auto max-w-[260px] sm:max-w-[320px] lg:max-w-[345px] xl:max-w-[380px]">
                 <div
                   aria-hidden="true"
-                  className="pointer-events-none absolute -end-3.5 -top-3.5 w-full h-full rounded-t-full rounded-b-[22px] border border-copper-500/45"
+                  className="pointer-events-none absolute -end-3 -top-3 w-full h-full rounded-t-full rounded-b-[20px] border border-copper-500/45"
                 />
-                <MaskReveal variant="arch" immediate delay={0.12}>
-                  <div className="overflow-hidden rounded-t-full rounded-b-[22px] bg-surface-high aspect-[3.8/5]">
-                    <ParallaxBox offsetPercent={5} className="w-full h-full">
+                <MaskReveal variant="arch" immediate delay={0.1}>
+                  <div className="overflow-hidden rounded-t-full rounded-b-[20px] bg-surface-high aspect-[4/4.85]">
+                    <ParallaxBox offsetPercent={4} className="w-full h-full">
                       <Image
                         src={doctorProfile.portraits.editorial.src}
                         alt={doctorProfile.portraits.editorial.alt[locale]}
                         width={doctorProfile.portraits.editorial.width}
                         height={doctorProfile.portraits.editorial.height}
                         priority
-                        sizes="(max-width: 1024px) 88vw, 430px"
-                        className="w-full h-full object-cover object-top scale-[1.06]"
+                        sizes="(max-width: 1024px) 320px, 380px"
+                        className="w-full h-full object-cover object-top scale-[1.05]"
                       />
                     </ParallaxBox>
                   </div>
                 </MaskReveal>
-                <p className="mt-4 text-xs text-on-surface-variant text-center">
+                <p className="mt-3 text-xs text-on-surface-variant text-center">
                   {doctorProfile.portraits.editorial.caption[locale]}
                 </p>
               </div>
@@ -241,11 +241,11 @@ export default async function AboutDoctorPage({
       </section>
 
       {/* 2. SPECIALIZATION & SCOPE OF FOCUS SPREAD */}
-      <section className="w-full bg-surface-low/65 py-20 sm:py-28 lg:py-34 border-y border-copper-500/20">
-        <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-14 grid grid-cols-1 lg:grid-cols-12 gap-14 lg:gap-16 items-center">
+      <section className="w-full bg-surface-low/65 py-16 sm:py-22 lg:py-24 border-y border-copper-500/20">
+        <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-14 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           <div className="lg:col-span-5 order-2 lg:order-1">
             <MaskReveal variant="rounded">
-              <div className="overflow-hidden rounded-[26px] border border-copper-500/35 bg-surface-lowest max-w-sm mx-auto aspect-[3.8/4.8]">
+              <div className="overflow-hidden rounded-[24px] border border-copper-500/35 bg-surface-lowest max-w-[310px] sm:max-w-[340px] mx-auto aspect-[4/4.6]">
                 <Image
                   src={doctorProfile.portraits.standing.src}
                   alt={doctorProfile.portraits.standing.alt[locale]}

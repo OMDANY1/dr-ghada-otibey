@@ -29,6 +29,7 @@ export function SiteHeader({ locale, dict }: SiteHeaderProps) {
   };
 
   const [scrolled, setScrolled] = useState(false);
+  const [pastHeroOnMobile, setPastHeroOnMobile] = useState(false);
   const [hidden, setHidden] = useState(false);
   const lastScrollY = useRef(0);
 
@@ -36,6 +37,7 @@ export function SiteHeader({ locale, dict }: SiteHeaderProps) {
     const onScroll = () => {
       const y = window.scrollY;
       setScrolled(y > 28);
+      setPastHeroOnMobile(y > 280);
 
       if (!reduced && !menuOpen) {
         if (y > 160 && y > lastScrollY.current + 8) {
@@ -112,7 +114,7 @@ export function SiteHeader({ locale, dict }: SiteHeaderProps) {
 
         <div
           className={`mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-14 flex items-center justify-between gap-2 sm:gap-6 transition-[height] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-            scrolled ? "h-16 sm:h-[70px]" : "h-20 sm:h-24"
+            scrolled ? "h-14 sm:h-[62px]" : "h-16 sm:h-[72px]"
           }`}
         >
           {/* Official Brand Emblem + Editorial Signature */}
@@ -310,10 +312,12 @@ export function SiteHeader({ locale, dict }: SiteHeaderProps) {
       </header>
 
       {/* Header Spacer to prevent initial layout overlap */}
-      <div className="h-20 sm:h-24" aria-hidden="true" />
+      <div className="h-16 sm:h-[72px]" aria-hidden="true" />
 
-      {/* Mobile-Only Slim Floating Pill CTA (Hidden on consultation route & when menu open) */}
-      {!isConsultationPage && !menuOpen && (
+      {/* Mobile-Only Slim Floating Pill CTA (Appears after Hero on Home; hidden on consultation route & when menu open) */}
+      {!isConsultationPage &&
+        !menuOpen &&
+        (pathname !== `/${locale}` || pastHeroOnMobile) && (
         <div className="sm:hidden fixed bottom-5 end-4 z-40">
           <Link
             href={consultationHref}
